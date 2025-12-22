@@ -1,9 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "./ui/button"; // Assuming a button component exists or I will use standard HTML/Tailwind for now if not
 import { useEffect, useState } from "react";
-import { cn } from "@/lib/utils"; // Assuming cn utility might exist, if not I'll standardise
 import { Menu, X } from "lucide-react";
 
 // Fallback for cn if not present, but I'll assume standard Shadcn/Tailwind setup or just use template literals
