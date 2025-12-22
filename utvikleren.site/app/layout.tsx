@@ -17,6 +17,9 @@ export const metadata: Metadata = {
   description: "Send henvendelse, få en demo, uten kostnader. Vi bygger fremtidens digitale løsninger.",
 };
 
+import { Suspense } from "react";
+import AnalyticsTracker from "./components/AnalyticsTracker";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -27,6 +30,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <Suspense fallback={null}>
+          <AnalyticsTracker />
+        </Suspense>
         {children}
       </body>
     </html>
