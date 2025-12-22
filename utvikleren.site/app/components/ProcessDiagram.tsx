@@ -16,9 +16,9 @@ function AnimatedBeam({
     delay = 0,
     color = "#60a5fa", // blue-400
 }: {
-    fromRef: React.RefObject<HTMLDivElement>;
-    toRef: React.RefObject<HTMLDivElement>;
-    containerRef: React.RefObject<HTMLDivElement>;
+    fromRef: React.RefObject<HTMLDivElement | null>;
+    toRef: React.RefObject<HTMLDivElement | null>;
+    containerRef: React.RefObject<HTMLDivElement | null>;
     curvature?: number;
     reverse?: boolean;
     duration?: number;
