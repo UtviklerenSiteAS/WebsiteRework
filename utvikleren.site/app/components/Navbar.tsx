@@ -37,7 +37,12 @@ export default function Navbar() {
     const [services, setServices] = useState<any[]>([]);
     const [loadingServices, setLoadingServices] = useState(true);
     const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
+    const [mounted, setMounted] = useState(false);
     const supabase = createClient();
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     // Icon Mapping Utility
     const IconMap: { [key: string]: any } = {
@@ -154,7 +159,7 @@ export default function Navbar() {
                             alt="Logo"
                             width={40}
                             height={40}
-                            className="h-6 w-6"
+                            className="h-8 w-8"
                             priority
                         />
                         <span className="text-xl font-medium tracking-tight text-white font-bold">Utvikleren.site</span>
@@ -279,7 +284,7 @@ export default function Navbar() {
                         className="flex items-center gap-2 bg-white text-black px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-100 transition-colors"
                     >
                         <Phone size={16} />
-                        Kontakt oss
+                        Kontakt meg
                     </Link>
                 </div>
 
@@ -292,9 +297,8 @@ export default function Navbar() {
                 </button>
             </div>
 
-            {/* Mobile Menu Modal (Portaled to body to avoid containing block issues from backdrop-filter) */}
             <AnimatePresence>
-                {isMobileMenuOpen && (
+                {mounted && isMobileMenuOpen && (
                     <MobileMenuOverlay
                         navLinks={navLinks}
                         activeDropdown={activeDropdown}
@@ -334,15 +338,22 @@ function MobileMenuOverlay({ navLinks, activeDropdown, setActiveDropdown, setIsM
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[100] bg-white text-black flex flex-col" // High z-index
+            className="fixed inset-0 z-[100] bg-black text-white flex flex-col" // Dark theme
         >
             {/* Mobile Header */}
-            <div className="h-16 flex items-center justify-between px-6 border-b border-gray-100">
-                <Link href="/" className="text-xl font-bold tracking-tight text-black flex items-center gap-2" onClick={() => setIsMobileMenuOpen(false)}>
+            <div className="h-16 flex items-center justify-between px-6 border-b border-white/10">
+                <Link href="/" className="text-xl font-bold tracking-tight text-white flex items-center gap-3" onClick={() => setIsMobileMenuOpen(false)}>
+                    <img
+                        src="/assets/images/Logo.png"
+                        alt="Logo"
+                        width={32}
+                        height={32}
+                        className="h-8 w-8 object-contain"
+                    />
                     <span>Utvikleren.site</span>
                 </Link>
                 <button
-                    className="p-2 -mr-2 text-black hover:bg-gray-100 rounded-full transition-colors"
+                    className="p-2 -mr-2 text-white hover:bg-white/10 rounded-full transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                 >
                     <X size={24} />
@@ -353,9 +364,9 @@ function MobileMenuOverlay({ navLinks, activeDropdown, setActiveDropdown, setIsM
             <div className="flex-1 overflow-y-auto px-6 py-6 flex flex-col gap-6">
                 <div className="flex flex-col gap-2">
                     {navLinks.map((link: any) => (
-                        <div key={link.name} className="border-b border-gray-100 last:border-0 pb-2 last:pb-0">
+                        <div key={link.name} className="border-b border-white/5 last:border-0 pb-2 last:pb-0">
                             <div
-                                className="flex items-center justify-between py-3 text-lg font-medium text-gray-900"
+                                className="flex items-center justify-between py-3 text-lg font-medium text-white"
                                 onClick={() => {
                                     if (link.hasDropdown) {
                                         setActiveDropdown(activeDropdown === link.name ? null : link.name);
@@ -375,13 +386,13 @@ function MobileMenuOverlay({ navLinks, activeDropdown, setActiveDropdown, setIsM
                                         }
                                     }}
                                 >
-                                    <link.icon size={20} className="text-gray-500" />
+                                    <link.icon size={20} className="text-gray-400" />
                                     {link.name}
                                 </Link>
                                 {link.hasDropdown && (
                                     <ChevronDown
                                         size={16}
-                                        className={`text-gray-400 transition-transform duration-200 ${activeDropdown === link.name ? "rotate-180" : ""}`}
+                                        className={`text-gray-500 transition-transform duration-200 ${activeDropdown === link.name ? "rotate-180" : ""}`}
                                     />
                                 )}
                             </div>
@@ -398,13 +409,13 @@ function MobileMenuOverlay({ navLinks, activeDropdown, setActiveDropdown, setIsM
                                         <div className="pl-4 pb-4 pt-1 flex flex-col gap-2">
                                             {link.megaMenu ? (
                                                 <>
-                                                    <div className="mb-4 p-4 bg-gray-50 rounded-xl">
-                                                        <p className="font-medium text-black mb-1">{link.megaMenu.headline}</p>
-                                                        <p className="text-sm text-gray-500 mb-3">{link.megaMenu.subtext}</p>
+                                                    <div className="mb-4 p-4 bg-white/5 border border-white/10 rounded-xl">
+                                                        <p className="font-medium text-white mb-1">{link.megaMenu.headline}</p>
+                                                        <p className="text-sm text-gray-400 mb-3">{link.megaMenu.subtext}</p>
                                                         <Link
                                                             href="/ai-fordeler"
                                                             onClick={() => setIsMobileMenuOpen(false)}
-                                                            className="inline-block text-xs font-semibold bg-white border border-gray-200 px-3 py-1.5 rounded-lg"
+                                                            className="inline-block text-xs font-semibold bg-white text-black px-3 py-1.5 rounded-lg"
                                                         >
                                                             {link.megaMenu.action}
                                                         </Link>
@@ -413,11 +424,11 @@ function MobileMenuOverlay({ navLinks, activeDropdown, setActiveDropdown, setIsM
                                                         <Link
                                                             key={item.name}
                                                             href={item.href}
-                                                            className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 text-gray-600 hover:text-black transition-colors"
+                                                            className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 text-gray-400 hover:text-white transition-colors"
                                                             onClick={() => setIsMobileMenuOpen(false)}
                                                         >
-                                                            <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
-                                                                <item.icon size={14} className="text-gray-600" />
+                                                            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
+                                                                <item.icon size={14} className="text-gray-300" />
                                                             </div>
                                                             <span className="text-sm font-medium">{item.name}</span>
                                                         </Link>
@@ -428,7 +439,7 @@ function MobileMenuOverlay({ navLinks, activeDropdown, setActiveDropdown, setIsM
                                                     <Link
                                                         key={item.name}
                                                         href={item.href}
-                                                        className="block px-3 py-2 text-base text-gray-600 hover:text-black hover:bg-gray-50 rounded-lg transition-colors"
+                                                        className="block px-3 py-2 text-base text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
                                                         onClick={() => setIsMobileMenuOpen(false)}
                                                     >
                                                         {item.name}
@@ -445,16 +456,21 @@ function MobileMenuOverlay({ navLinks, activeDropdown, setActiveDropdown, setIsM
 
                 {/* Mobile Actions */}
                 <div className="mt-auto pt-6 flex flex-col gap-3">
-                    <button className="w-full h-12 flex items-center justify-center gap-2 rounded-full border border-gray-200 text-black font-medium text-base hover:bg-gray-50 transition-colors">
-                        <User size={18} />
-                        Sign in
-                    </button>
-                    <button
-                        className="w-full h-12 flex items-center justify-center gap-2 bg-black text-white rounded-full font-medium text-base hover:bg-gray-900 transition-colors"
+                    <Link
+                        href="/login"
+                        className="w-full h-12 flex items-center justify-center gap-2 rounded-full border border-white/10 text-white font-medium text-base hover:bg-white/5 transition-colors"
+                        onClick={() => setIsMobileMenuOpen(false)}
                     >
-                        <Download size={18} />
-                        Download
-                    </button>
+                        <User size={18} />
+                        Logg inn
+                    </Link>
+                    <Link
+                        href="/kontakt"
+                        className="w-full h-12 flex items-center justify-center gap-2 bg-white text-black rounded-full font-medium text-base hover:bg-gray-100 transition-colors"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                        Kontakt meg
+                    </Link>
                 </div>
             </div>
         </motion.div>,

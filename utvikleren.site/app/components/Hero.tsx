@@ -9,9 +9,11 @@ import AiPlasmaAnimation from "./AiPlasmaAnimation";
 
 export default function Hero() {
     const [user, setUser] = useState<SupabaseUser | null>(null);
+    const [mounted, setMounted] = useState(false);
     const supabase = createClient();
 
     useEffect(() => {
+        setMounted(true);
         async function getUser() {
             const { data: { user } } = await supabase.auth.getUser();
             setUser(user);
@@ -25,62 +27,72 @@ export default function Hero() {
         return () => subscription.unsubscribe();
     }, []);
 
+    if (!mounted) return <section className="relative min-h-[100dvh] bg-black" />;
+
     return (
-        <section className="relative h-screen max-h-screen px-6 w-full overflow-hidden bg-black text-white">
-            <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 w-full z-10 h-full">
-                {/* Left Column: Text Content - Aligned to Bottom */}
+        <section className="relative min-h-[100dvh] lg:h-screen lg:max-h-screen px-6 w-full overflow-hidden bg-black text-white flex flex-col items-center justify-center">
+            {/* Background Animation - Integrated, no borders */}
+            <div className="absolute inset-0 z-0">
+                <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black z-10 opacity-60" />
+                <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black z-10 opacity-60" />
+                <AiPlasmaAnimation />
+            </div>
+
+            <div className="max-w-4xl mx-auto w-full z-10 relative text-center pt-20">
+                {/* Content */}
                 <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: "easeOut" }}
-                    className="space-y-6 text-left flex flex-col justify-end pb-20 md:pb-32"
+                    className="space-y-8"
                 >
-                    <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400 pb-2 leading-[1.1]">
-                        Opplev kvalitet
-                    </h1>
-                    <p className="text-lg md:text-xl text-gray-400 max-w-lg leading-relaxed">
-                        Send henvendelse, få en demo, uten kostnader. Vi bygger fremtidens digitale løsninger.
-                    </p>
+                    <div className="space-y-4">
+                        <motion.h1
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2, duration: 0.8 }}
+                            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-gray-500 pb-2 leading-[1.05]"
+                        >
+                            Opplev kvalitet
+                        </motion.h1>
+                        <motion.p
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.4, duration: 0.8 }}
+                            className="text-lg md:text-2xl text-gray-400 max-w-2xl mx-auto leading-relaxed"
+                        >
+                            Send henvendelse, få en demo, uten kostnader.<br className="hidden md:block" /> Vi bygger fremtidens digitale løsninger.
+                        </motion.p>
+                    </div>
+
                     <motion.div
-                        initial={{ opacity: 0, y: 10 }}
+                        initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2, duration: 0.6 }}
-                        className="flex flex-col sm:flex-row items-start gap-4 pt-4"
+                        transition={{ delay: 0.6, duration: 0.8 }}
+                        className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
                     >
                         {user ? (
                             <Link
                                 href="/dashboard"
-                                className="h-12 px-8 rounded-full bg-white text-black font-medium flex items-center justify-center hover:bg-gray-100 transition-colors min-w-[160px]"
+                                className="h-14 px-10 rounded-full bg-white text-black font-semibold flex items-center justify-center hover:bg-gray-100 transition-all hover:scale-105 active:scale-95 shadow-xl shadow-white/10 min-w-[200px]"
                             >
                                 Gå til dashboard
                             </Link>
                         ) : (
                             <Link
                                 href="/login"
-                                className="h-12 px-8 rounded-full bg-white text-black font-medium flex items-center justify-center hover:bg-gray-100 transition-colors min-w-[160px]"
+                                className="h-14 px-10 rounded-full bg-white text-black font-semibold flex items-center justify-center hover:bg-gray-100 transition-all hover:scale-105 active:scale-95 shadow-xl shadow-white/10 min-w-[200px]"
                             >
                                 Logg inn
                             </Link>
                         )}
                         <Link
                             href="/kontakt"
-                            className="h-12 px-8 rounded-full bg-white/10 border border-white/10 text-white font-medium flex items-center justify-center hover:bg-white/20 transition-colors min-w-[160px]"
+                            className="h-14 px-10 rounded-full bg-white/10 border border-white/20 text-white font-semibold flex items-center justify-center hover:bg-white/20 backdrop-blur-sm transition-all hover:scale-105 active:scale-95 min-w-[200px]"
                         >
-                            Kontakt oss
+                            Kontakt meg
                         </Link>
                     </motion.div>
-                </motion.div>
-
-                {/* Right Column: AI Plasma Animation - Centered or Top */}
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 1, delay: 0.2 }}
-                    className="relative w-full h-[400px] md:h-[500px] rounded-3xl overflow-hidden self-center"
-                >
-                    <div className="absolute inset-0 z-0 opacity-80 mix-blend-screen">
-                        <AiPlasmaAnimation />
-                    </div>
                 </motion.div>
             </div>
         </section>
