@@ -38,6 +38,9 @@ export default function AdminAnalyticsDashboard() {
     const [activities, setActivities] = useState<any[]>([]);
 
     useEffect(() => {
+        let interval: NodeJS.Timeout;
+        let subscription: any;
+
         async function fetchData() {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user || user.email !== 'post@utvikleren.site') {
@@ -46,71 +49,96 @@ export default function AdminAnalyticsDashboard() {
             }
             setUser(user);
 
-            // 1. Fetch total pageviews
-            const { count: totalPageviews } = await supabase
-                .from('analytics_visits')
-                .select('*', { count: 'exact', head: true });
+            const fetchStats = async () => {
+                // 1. Fetch total pageviews
+                const { count: totalPageviews } = await supabase
+                    .from('analytics_visits')
+                    .select('*', { count: 'exact', head: true });
 
-            // 2. Fetch unique visitors (by session_id)
-            const { data: uniqueSessions } = await supabase
-                .from('analytics_visits')
-                .select('session_id');
-            const uniqueCount = new Set(uniqueSessions?.map(s => s.session_id)).size;
+                // 2. Fetch unique visitors (by session_id)
+                const { data: uniqueSessions } = await supabase
+                    .from('analytics_visits')
+                    .select('session_id');
+                const uniqueCount = new Set(uniqueSessions?.map(s => s.session_id)).size;
 
-            // 3. Fetch active now (last 5 mins)
-            const fiveMinsAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
-            const { data: activeSessions } = await supabase
-                .from('analytics_visits')
-                .select('session_id')
-                .gt('created_at', fiveMinsAgo);
-            const activeCount = new Set(activeSessions?.map(s => s.session_id)).size;
+                // 3. Fetch active now (last 10 mins for better visibility)
+                const tenMinsAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+                const { data: activeSessions } = await supabase
+                    .from('analytics_visits')
+                    .select('session_id')
+                    .gt('created_at', tenMinsAgo);
+                const activeCount = new Set(activeSessions?.map(s => s.session_id)).size;
 
-            // 4. Fetch Top Pages
-            const { data: visits } = await supabase
-                .from('analytics_visits')
-                .select('path');
-            const pathCounts: Record<string, number> = {};
-            visits?.forEach(v => {
-                pathCounts[v.path] = (pathCounts[v.path] || 0) + 1;
-            });
-            const sortedPaths = Object.entries(pathCounts)
-                .map(([path, count]) => ({ path, count }))
-                .sort((a, b) => b.count - a.count)
-                .slice(0, 5);
+                // 4. Fetch Top Pages
+                const { data: visits } = await supabase
+                    .from('analytics_visits')
+                    .select('path');
+                const pathCounts: Record<string, number> = {};
+                visits?.forEach(v => {
+                    pathCounts[v.path] = (pathCounts[v.path] || 0) + 1;
+                });
+                const sortedPaths = Object.entries(pathCounts)
+                    .map(([path, count]) => ({ path, count }))
+                    .sort((a, b) => b.count - a.count)
+                    .slice(0, 5);
 
-            // 5. Fetch Chart Data (Last 30 days)
-            const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
-            const { data: lastMonthVisits } = await supabase
-                .from('analytics_visits')
-                .select('created_at')
-                .gt('created_at', thirtyDaysAgo);
+                // 5. Fetch Chart Data (Last 30 days)
+                const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+                const { data: lastMonthVisits } = await supabase
+                    .from('analytics_visits')
+                    .select('created_at')
+                    .gt('created_at', thirtyDaysAgo);
 
-            const dailyCountsAt = new Array(30).fill(0);
-            lastMonthVisits?.forEach(v => {
-                const dayDiff = Math.floor((Date.now() - new Date(v.created_at).getTime()) / (1000 * 60 * 60 * 24));
-                if (dayDiff < 30) dailyCountsAt[29 - dayDiff]++;
-            });
+                const dailyCountsAt = new Array(30).fill(0);
+                lastMonthVisits?.forEach(v => {
+                    const dayDiff = Math.floor((Date.now() - new Date(v.created_at).getTime()) / (1000 * 60 * 60 * 24));
+                    if (dayDiff < 30) dailyCountsAt[29 - dayDiff]++;
+                });
 
-            // 6. Fetch Recent Activity (New registrations or Logins)
-            // For now, let's keep it simple and show the newest visits
-            const { data: recentVisits } = await supabase
-                .from('analytics_visits')
-                .select('*')
-                .order('created_at', { ascending: false })
-                .limit(5);
+                // 6. Fetch Recent Activity
+                const { data: recentVisits } = await supabase
+                    .from('analytics_visits')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(5);
 
-            setStats({
-                totalVisitors: uniqueCount.toLocaleString(),
-                totalPageviews: (totalPageviews || 0).toLocaleString(),
-                activeNow: activeCount.toString(),
-                avgSession: "2m 45s" // This would require more complex session calculation
-            });
-            setTopPages(sortedPaths);
-            setChartData(dailyCountsAt);
-            setActivities(recentVisits || []);
-            setLoading(false);
+                setStats({
+                    totalVisitors: uniqueCount.toLocaleString(),
+                    totalPageviews: (totalPageviews || 0).toLocaleString(),
+                    activeNow: activeCount.toString(),
+                    avgSession: "2m 45s"
+                });
+                setTopPages(sortedPaths);
+                setChartData(dailyCountsAt);
+                setActivities(recentVisits || []);
+                setLoading(false);
+            };
+
+            await fetchStats();
+
+            // Set up interval to refresh "Active Now" every 30 seconds
+            interval = setInterval(fetchStats, 30000);
+
+            // Set up Realtime subscription for instant updates on new visits
+            subscription = supabase
+                .channel('analytics_realtime')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'analytics_visits' }, (payload) => {
+                    // Instantly update local stats when someone visits
+                    setStats(prev => ({
+                        ...prev,
+                        totalPageviews: (parseInt(prev.totalPageviews.replace(/,/g, '')) + 1).toLocaleString(),
+                    }));
+                    setActivities(prev => [payload.new, ...prev].slice(0, 5));
+                })
+                .subscribe();
         }
+
         fetchData();
+
+        return () => {
+            if (interval) clearInterval(interval);
+            if (subscription) supabase.removeChannel(subscription);
+        };
     }, [supabase, router]);
 
     const recentActivity = activities.map(act => ({

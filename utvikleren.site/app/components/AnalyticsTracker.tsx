@@ -11,8 +11,8 @@ export default function AnalyticsTracker() {
 
     useEffect(() => {
         const logVisit = async () => {
-            // Don't track admin pages or dashboard to avoid inflating your own stats
-            if (pathname.includes("/admin") || pathname.includes("/dashboard") || pathname.includes("/api/")) {
+            // Only exclude API routes to avoid noise
+            if (pathname.includes("/api/")) {
                 return;
             }
 
