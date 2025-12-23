@@ -6,10 +6,12 @@ export default function DashboardLayout({
     children: React.ReactNode;
 }) {
     return (
-        <div className="bg-black text-white min-h-screen font-sans selection:bg-white selection:text-black">
+        <div className="bg-[#050505] text-white min-h-screen font-sans selection:bg-white selection:text-black overflow-x-hidden">
             <DashboardSidebar />
-            <div className="lg:pl-64">
-                {children}
+            <div className="lg:pl-72 min-h-screen">
+                <main className="w-full h-full">
+                    {children}
+                </main>
             </div>
         </div>
     );

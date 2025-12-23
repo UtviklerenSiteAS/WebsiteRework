@@ -2,16 +2,30 @@
 
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { ArrowLeft, Bot, LayoutDashboard, FolderKanban, Settings, Menu, X, Video, BarChart3 } from "lucide-react";
+import { 
+    ArrowLeft, 
+    LayoutDashboard, 
+    FolderKanban, 
+    Settings, 
+    Menu, 
+    X, 
+    LogOut, 
+    BarChart3,
+    User as UserIcon,
+    Shield,
+    MessageSquare,
+    Zap
+} from "lucide-react";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { User } from "@supabase/supabase-js";
+import Image from "next/image";
 
 interface MenuItem {
     label: string;
     icon: React.ReactNode;
     href: string;
-    isBackButton?: boolean;
+    isAdminOnly?: boolean;
 }
 
 export default function DashboardSidebar() {
@@ -33,43 +47,54 @@ export default function DashboardSidebar() {
 
     const menuItems: MenuItem[] = [
         {
-            label: "Gå tilbake",
-            icon: <ArrowLeft size={20} />,
-            href: "/",
-            isBackButton: true,
-        },
-        {
             label: "Oversikt",
             icon: <LayoutDashboard size={20} />,
             href: "/dashboard",
         },
-        ...(isAdmin ? [{
-            label: "Admin Dashboard",
-            icon: <BarChart3 size={20} />,
-            href: "/dashboard/admin",
-        }] : []),
         {
-            label: "Nettside Prosjekter",
+            label: "Prosjekter",
             icon: <FolderKanban size={20} />,
             href: "/dashboard/nettside-prosjekter",
         },
+        {
+            label: "AI Resepsjonist",
+            icon: <Zap size={20} />,
+            href: "/dashboard/ai-resepsjonist",
+        },
+        {
+            label: "Systemforvaltning",
+            icon: <Shield size={20} />,
+            href: "/dashboard/systemforvaltning",
+        },
+        {
+            label: "Admin",
+            icon: <BarChart3 size={20} />,
+            href: "/dashboard/admin",
+            isAdminOnly: true,
+        },
     ];
+
+    const handleSignOut = async () => {
+        await supabase.auth.signOut();
+        router.push("/");
+        router.refresh();
+    };
 
     return (
         <>
-            {/* Mobile Menu Button */}
+            {/* Mobile Menu Toggle */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="fixed top-6 left-6 z-50 lg:hidden bg-white/10 border border-white/20 p-3 rounded-xl hover:bg-white/20 transition-colors"
+                className="fixed top-5 left-5 z-[60] lg:hidden bg-white/5 backdrop-blur-xl border border-white/10 p-3 rounded-2xl text-white hover:bg-white/10 transition-all active:scale-95 shadow-2xl"
                 aria-label="Toggle menu"
             >
                 {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
 
-            {/* Overlay for mobile */}
+            {/* Overlay */}
             {isOpen && (
                 <div
-                    className="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 lg:hidden"
+                    className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 lg:hidden"
                     onClick={() => setIsOpen(false)}
                 />
             )}
@@ -77,24 +102,31 @@ export default function DashboardSidebar() {
             {/* Sidebar */}
             <aside
                 className={`
-                    fixed left-0 top-0 h-screen w-64 bg-black border-r border-white/10 flex flex-col z-40
-                    transition-transform duration-300 ease-in-out
+                    fixed left-0 top-0 h-screen w-64 bg-black/40 backdrop-blur-2xl border-r border-white/5 flex flex-col z-50
+                    transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]
                     ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
                 `}
             >
-                {/* Logo/Brand */}
-                <div className="p-6 border-b border-white/10">
-                    <h2 className="text-2xl font-bold tracking-tight">
-                        <span className="text-white">Utvikleren</span>
-                        <span className="text-gray-500">.site</span>
-                    </h2>
+                {/* Brand */}
+                <div className="p-10 pb-12">
+                    <Link href="/" className="group flex items-center gap-3">
+                        <Image 
+                            src="/assets/images/Logo.png" 
+                            alt="Logo" 
+                            width={32} 
+                            height={32} 
+                            className="h-8 w-8"
+                        />
+                        <h2 className="text-xl font-bold tracking-tight text-white">Utvikleren.site</h2>
+                    </Link>
                 </div>
 
-                {/* Menu Items */}
-                <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+                {/* Navigation */}
+                <nav className="flex-1 px-8 space-y-1 overflow-y-auto custom-scrollbar">
                     {menuItems.map((item) => {
+                        if (item.isAdminOnly && !isAdmin) return null;
+                        
                         const isActive = pathname === item.href;
-                        const isBack = item.isBackButton;
 
                         return (
                             <Link
@@ -102,40 +134,60 @@ export default function DashboardSidebar() {
                                 href={item.href}
                                 onClick={() => setIsOpen(false)}
                                 className={`
-                                    group flex items-center gap-3 px-4 py-3 rounded-xl
-                                    transition-all duration-200 relative overflow-hidden
+                                    group flex items-center gap-4 py-3 rounded-2xl
+                                    transition-all duration-300 relative
                                     ${isActive
-                                        ? 'bg-white/10 text-white'
-                                        : isBack
-                                            ? 'text-gray-400 hover:text-white hover:bg-white/5'
-                                            : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                        ? 'text-white'
+                                        : 'text-gray-500 hover:text-white'
                                     }
                                 `}
                             >
-                                {/* Hover gradient effect */}
-                                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-500/5 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                                {/* Active indicator */}
-                                {isActive && (
-                                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-purple-500 to-blue-500 rounded-r-full" />
-                                )}
-
-                                <span className="relative z-10 flex-shrink-0">
+                                <span className={`relative z-10 transition-all duration-500 ${isActive ? 'scale-110' : 'group-hover:scale-110 opacity-60 group-hover:opacity-100'}`}>
                                     {item.icon}
                                 </span>
-                                <span className="relative z-10 font-medium">
+                                <span className="relative z-10 font-medium tracking-tight text-sm">
                                     {item.label}
                                 </span>
+                                {isActive && (
+                                    <motion.div 
+                                        layoutId="active-nav-bg"
+                                        className="absolute -inset-x-2 inset-y-0 bg-white/5 rounded-2xl -z-0"
+                                        transition={{ type: "spring", bounce: 0, duration: 0.6 }}
+                                    />
+                                )}
                             </Link>
                         );
                     })}
                 </nav>
 
-                {/* Footer/Version */}
-                <div className="p-6 border-t border-white/10">
-                    <p className="text-xs text-gray-500">Dashboard v1.0</p>
+                {/* Footer User Section */}
+                <div className="p-8 pt-6 mt-auto border-t border-white/5">
+                    <div className="flex items-center gap-4 mb-8">
+                        <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 text-sm font-bold">
+                            {user?.user_metadata?.full_name?.[0] || user?.email?.[0]?.toUpperCase()}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-white truncate leading-none mb-1">
+                                {user?.user_metadata?.full_name?.split(' ')[0] || 'Bruker'}
+                            </p>
+                            <p className="text-xs text-gray-500 truncate">
+                                Pro Member
+                            </p>
+                        </div>
+                    </div>
+
+                    <button
+                        onClick={handleSignOut}
+                        className="w-full flex items-center justify-center gap-3 py-3 rounded-2xl text-xs font-bold text-gray-500 hover:text-white hover:bg-red-500/10 hover:text-red-500 transition-all active:scale-95 group"
+                    >
+                        <LogOut size={16} />
+                        Logg ut
+                    </button>
                 </div>
             </aside>
         </>
     );
 }
+
+// Minimal framer motion mock if not installed, but usually project has it.
+import { motion } from "framer-motion";

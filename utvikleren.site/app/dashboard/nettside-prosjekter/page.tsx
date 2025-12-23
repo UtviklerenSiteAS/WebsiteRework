@@ -8,6 +8,7 @@ import { FolderKanban, Plus, Globe, Calendar, TrendingUp, Edit3, ExternalLink, S
 import AdminModal from "../../components/ui/AdminModal";
 import WebsiteProjectForm from "../../components/forms/WebsiteProjectForm";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 interface Project {
     id: string;
@@ -159,63 +160,66 @@ export default function NettsidenProsjekterDashboard() {
     }
 
     return (
-        <div className="p-6 md:p-12 text-white font-sans selection:bg-white selection:text-black">
-            {/* Header */}
-            <div className="mb-12">
+        <div className="min-h-screen bg-black text-white p-8 md:p-16 lg:p-24 selection:bg-white selection:text-black font-sans">
+            {/* Minimal Header */}
+            <header className="mb-24">
                 {pageError && (
-                    <div className="mb-8 p-6 bg-red-500/10 border border-red-500/20 rounded-[2rem] flex flex-col gap-2">
-                        <div className="flex items-center gap-2 text-red-500 font-bold">
-                            <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                            Database-feil
-                        </div>
-                        <p className="text-gray-400 text-sm leading-relaxed">
-                            {pageError} <br />
-                            <span className="text-[10px] mt-1 block opacity-50">Tips: Sørg for at du har kjørt SQL-skriptet for "profiles" i Supabase-dashbordet.</span>
-                        </p>
-                    </div>
+                    <motion.div 
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mb-12 p-6 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-500 text-sm font-medium"
+                    >
+                        {pageError}
+                    </motion.div>
                 )}
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
-                    <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 bg-blue-500/20 rounded-2xl flex items-center justify-center">
-                            <FolderKanban size={28} className="text-blue-400" />
-                        </div>
-                        <div>
-                            <h1 className="text-4xl font-bold tracking-tight">Nettside Prosjekter</h1>
-                            <p className="text-gray-400 mt-1">
-                                {isAdmin ? "Administrer alle kundeprosjekter og brukere" : "Oversikt over dine aktive prosjekter"}
-                            </p>
-                        </div>
-                    </div>
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-12">
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                    >
+                        <h1 className="text-6xl md:text-8xl font-bold tracking-tighter mb-8">
+                            Nettside <br />
+                            <span className="text-white/40">Prosjekter</span>
+                        </h1>
+                        <p className="text-xl text-gray-500 font-light tracking-tight max-w-xl">
+                            {isAdmin ? "Administrer og overvåk alle aktive kundeprosjekter." : "Følg fremdriften og administrer dine nettsideprosjekter."}
+                        </p>
+                    </motion.div>
+                    
                     {isAdmin && (
-                        <button
+                        <motion.button
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.5 }}
                             onClick={() => { setSelectedProject(null); setIsModalOpen(true); }}
-                            className="px-8 py-4 bg-white text-black rounded-2xl font-bold transition-all hover:scale-105 active:scale-95 flex items-center gap-2 shadow-lg"
+                            className="px-10 py-5 bg-white text-black rounded-full font-bold transition-all hover:bg-gray-200 active:scale-95 flex items-center gap-3"
                         >
                             <Plus size={20} />
                             Nytt prosjekt
-                        </button>
+                        </motion.button>
                     )}
                 </div>
-            </div>
+            </header>
 
-            {/* Admin Controls */}
+            {/* Admin Controls - Minimalized */}
             {isAdmin && (
-                <div className="mb-12 space-y-6">
-                    <div className="relative group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-white transition-colors" size={20} />
+                <div className="mb-24 space-y-12">
+                    <div className="relative group max-w-2xl">
+                        <Search className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-700 group-focus-within:text-white transition-colors" size={20} />
                         <input
                             type="text"
-                            placeholder="Søk i prosjektnavn, beskrivelse eller e-post..."
+                            placeholder="Søk i prosjekter..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full bg-[#0A0A0A] border border-white/10 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:border-white/30 transition-all text-lg"
+                            className="w-full bg-transparent border-b border-white/10 py-6 pl-10 pr-6 focus:outline-none focus:border-white transition-all text-xl font-light placeholder:text-gray-800"
                         />
                     </div>
 
-                    <div className="flex items-center gap-2 overflow-x-auto pb-4 scrollbar-hide">
+                    <div className="flex items-center gap-8 overflow-x-auto pb-4 scrollbar-hide">
                         <button
                             onClick={() => setSelectedCustomerId(null)}
-                            className={`whitespace-nowrap px-6 py-2 rounded-xl text-sm font-medium transition-all border ${!selectedCustomerId ? 'bg-white text-black border-white shadow-lg shadow-white/10' : 'bg-white/5 text-gray-400 border-white/10 hover:border-white/20'}`}
+                            className={`whitespace-nowrap text-sm font-bold tracking-widest uppercase transition-all ${!selectedCustomerId ? 'text-white' : 'text-gray-700 hover:text-gray-400'}`}
                         >
                             Alle Kunder
                         </button>
@@ -223,130 +227,118 @@ export default function NettsidenProsjekterDashboard() {
                             <button
                                 key={profile.id}
                                 onClick={() => setSelectedCustomerId(profile.id)}
-                                className={`whitespace-nowrap px-6 py-2 rounded-xl text-sm font-medium transition-all border ${selectedCustomerId === profile.id ? 'bg-blue-500 text-white border-blue-500 shadow-lg shadow-blue-500/20' : 'bg-white/5 text-gray-400 border-white/10 hover:border-white/20'}`}
+                                className={`whitespace-nowrap text-sm font-bold tracking-widest uppercase transition-all ${selectedCustomerId === profile.id ? 'text-white' : 'text-gray-700 hover:text-gray-400'}`}
                             >
-                                {profile.email}
+                                {profile.email.split('@')[0]}
                             </button>
                         ))}
                     </div>
                 </div>
             )}
 
-            {/* Stats Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-16">
-                <StatCard icon={FolderKanban} color="text-blue-400" label="Totalt" value={stats.total} />
-                <StatCard icon={Globe} color="text-emerald-400" label="Live" value={stats.live} />
-                <StatCard icon={Calendar} color="text-amber-400" label="Vurdering" value={stats.review} />
-                <StatCard icon={TrendingUp} color="text-blue-400" label="Utvikles" value={stats.inDevelopment} />
-            </div>
-
-            {/* Projects List */}
-            <div className="space-y-8">
-                <div className="flex items-center justify-between">
-                    <h2 className="text-2xl font-semibold flex items-center gap-3">
-                        {isAdmin ? "Alle Prosjekter" : "Dine Prosjekter"}
-                        <span className="px-3 py-1 bg-white/5 rounded-full text-xs font-mono text-gray-500 border border-white/10">
-                            {filteredProjects.length}
-                        </span>
-                    </h2>
-                </div>
-
+            {/* Projects Section */}
+            <div className="space-y-32">
                 {filteredProjects.length === 0 ? (
-                    <div className="bg-white/5 border border-white/10 rounded-[3rem] p-24 text-center grayscale opacity-50">
-                        <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <FolderKanban size={48} className="text-gray-600" />
-                        </div>
-                        <h3 className="text-2xl font-bold mb-3">Ingen prosjekter funnet</h3>
-                        <p className="text-gray-400 text-lg max-w-sm mx-auto">
-                            {searchQuery ? `Det er ingen resultater for "${searchQuery}"` : isAdmin ? "Begynn med å opprette det første prosjektet." : "Du har ingen aktive prosjekter for øyeblikket."}
+                    <div className="py-32 border-t border-white/5">
+                        <p className="text-2xl text-gray-700 font-light tracking-tight italic">
+                            {searchQuery ? `Ingen resultater for "${searchQuery}"` : "Ingen aktive prosjekter akkurat nå."}
                         </p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 gap-8">
-                        {filteredProjects.map((project) => (
-                            <div
+                    <div className="grid grid-cols-1 gap-16">
+                        {filteredProjects.map((project, idx) => (
+                            <motion.div
                                 key={project.id}
-                                className="group relative bg-[#0A0A0A] border border-white/10 rounded-[2.5rem] overflow-hidden hover:border-white/20 transition-all duration-500"
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: idx * 0.1, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                                className="group pt-16 border-t border-white/5"
                             >
-                                <div className="p-10">
-                                    <div className="flex flex-col md:flex-row md:items-start justify-between gap-8 mb-10">
+                                <div className="grid grid-cols-1 xl:grid-cols-12 gap-16">
+                                    {/* Main Info */}
+                                    <div className="xl:col-span-7">
+                                        <div className="flex flex-wrap items-center gap-4 mb-8">
+                                            <span className={`text-[10px] font-black uppercase tracking-[0.3em] ${project.status === 'Live' ? 'text-emerald-500' : 'text-blue-500'}`}>
+                                                {project.status}
+                                            </span>
+                                            <span className="text-gray-800 text-[10px] font-bold uppercase tracking-[0.2em]">
+                                                {new Date(project.created_at).toLocaleDateString('nb-NO')}
+                                            </span>
+                                        </div>
                                         <Link
                                             href={`/dashboard/nettside-prosjekter/${project.id}`}
-                                            className="flex-1 group/title"
+                                            className="group/title inline-block mb-8"
                                         >
-                                            <div className="space-y-2">
-                                                <div className="flex items-center gap-4 mb-3">
-                                                    <h3 className="text-3xl font-bold tracking-tight group-hover/title:text-blue-400 transition-colors flex items-center gap-3">
-                                                        {project.name}
-                                                        <ChevronRight size={24} className="opacity-0 -translate-x-2 group-hover/title:opacity-100 group-hover/title:translate-x-0 transition-all text-blue-400" />
-                                                    </h3>
-                                                    <span className={`px-4 py-1.5 rounded-full text-[11px] uppercase font-black tracking-widest border ${getStatusStyles(project.status)}`}>
-                                                        {project.status}
-                                                    </span>
-                                                </div>
-                                                <p className="text-gray-400 text-lg leading-relaxed max-w-3xl">{project.description}</p>
-                                            </div>
+                                            <h3 className="text-4xl md:text-5xl font-bold tracking-tighter group-hover/title:text-white/60 transition-colors">
+                                                {project.name}
+                                            </h3>
                                         </Link>
-
-                                        <div className="flex items-center gap-4 shrink-0">
+                                        <p className="text-xl text-gray-500 font-light leading-relaxed max-w-2xl mb-12">
+                                            {project.description}
+                                        </p>
+                                        
+                                        <div className="flex flex-wrap gap-4">
                                             <Link
                                                 href={`/dashboard/nettside-prosjekter/${project.id}`}
-                                                className="flex items-center justify-center p-3.5 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 rounded-2xl text-blue-400 transition-all hover:scale-105"
-                                                title="Se trafikk-oversikt"
+                                                className="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl text-sm font-bold transition-all"
                                             >
-                                                <BarChart3 size={24} />
+                                                Se detaljer
                                             </Link>
                                             {project.url && (
                                                 <a
                                                     href={project.url}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="flex items-center gap-2 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl text-base font-bold transition-all"
+                                                    className="px-8 py-4 border border-white/10 rounded-2xl text-sm font-bold hover:bg-white hover:text-black transition-all"
                                                 >
-                                                    <ExternalLink size={20} />
-                                                    Besøk
+                                                    Gå til nettside
                                                 </a>
                                             )}
                                             {isAdmin && (
                                                 <button
                                                     onClick={() => handleEdit(project)}
-                                                    className="p-3.5 text-black bg-white hover:bg-gray-200 rounded-2xl transition-all shadow-xl"
+                                                    className="p-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition-all"
                                                 >
-                                                    <Edit3 size={24} />
+                                                    <Edit3 size={18} />
                                                 </button>
                                             )}
                                         </div>
                                     </div>
 
-                                    {/* Progress Section */}
-                                    <div className="space-y-4">
-                                        <div className="flex justify-between items-end">
-                                            <div className="flex flex-col gap-1">
-                                                <span className="text-[10px] font-mono uppercase tracking-widest text-white/30">Fremdrift</span>
-                                                <span className="text-xl font-bold">{project.progress}%</span>
+                                    {/* Progress & Meta */}
+                                    <div className="xl:col-span-5 flex flex-col justify-center">
+                                        <div className="mb-12">
+                                            <div className="flex justify-between items-baseline mb-4">
+                                                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-700">Fremdrift</span>
+                                                <span className="text-4xl font-bold tracking-tighter">{project.progress}%</span>
                                             </div>
-                                            {isAdmin && project.profiles && (
-                                                <div className="text-right">
-                                                    <span className="text-[10px] font-mono uppercase tracking-widest text-white/30 block mb-1">Kunde</span>
-                                                    <span className="text-sm font-bold text-blue-400">{project.profiles.email}</span>
-                                                </div>
-                                            )}
+                                            <div className="h-[2px] bg-white/5 w-full relative">
+                                                <motion.div 
+                                                    initial={{ width: 0 }}
+                                                    whileInView={{ width: `${project.progress}%` }}
+                                                    viewport={{ once: true }}
+                                                    transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+                                                    className="absolute inset-y-0 left-0 bg-white"
+                                                />
+                                            </div>
                                         </div>
-                                        <div className="h-3 bg-white/5 rounded-full overflow-hidden">
-                                            <div
-                                                className="h-full bg-blue-500 rounded-full transition-all duration-1000 ease-out"
-                                                style={{ width: `${project.progress}%` }}
-                                            />
-                                        </div>
+                                        
+                                        {isAdmin && project.profiles && (
+                                            <div className="p-8 bg-white/[0.02] border border-white/5 rounded-3xl">
+                                                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-700 mb-2">Ansvarlig Kunde</p>
+                                                <p className="text-sm font-bold text-gray-400">{project.profiles.email}</p>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
-                            </div>
+                            </motion.div>
                         ))}
                     </div>
                 )}
             </div>
 
-            {/* Project Modal */}
+            {/* Modal remains the same */}
             <AdminModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
@@ -358,20 +350,6 @@ export default function NettsidenProsjekterDashboard() {
                     isAdmin={isAdmin}
                 />
             </AdminModal>
-        </div>
-    );
-}
-
-function StatCard({ icon: Icon, color, label, value }: any) {
-    return (
-        <div className="bg-[#0A0A0A] border border-white/10 rounded-[2rem] p-8 hover:border-white/20 transition-all group">
-            <div className="flex items-center gap-4 mb-4">
-                <div className={`p-2.5 rounded-xl bg-white/5 ${color} group-hover:scale-110 transition-transform`}>
-                    <Icon size={22} />
-                </div>
-                <h3 className="text-sm font-bold text-gray-500 uppercase tracking-widest">{label}</h3>
-            </div>
-            <p className="text-4xl font-bold tabular-nums tracking-tighter">{value}</p>
         </div>
     );
 }
