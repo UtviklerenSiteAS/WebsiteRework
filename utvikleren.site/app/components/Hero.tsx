@@ -32,9 +32,9 @@ export default function Hero() {
     return (
         <section className="relative min-h-[100dvh] lg:h-screen lg:max-h-screen px-6 w-full overflow-hidden bg-black text-white flex flex-col items-center justify-center">
             {/* Background Animation - Integrated, no borders */}
-            <div className="absolute inset-0 z-0">
-                <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black z-10 opacity-60" />
-                <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black z-10 opacity-60" />
+            <div className="absolute inset-0 z-0 pointer-events-none">
+                <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black z-10 opacity-60 pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black z-10 opacity-60 pointer-events-none" />
                 <AiPlasmaAnimation />
             </div>
 

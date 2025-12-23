@@ -23,7 +23,8 @@ import {
     Contact,
     Phone,
     Loader2,
-    Video
+    Video,
+    Smartphone
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import AdminModal from "./ui/AdminModal";
@@ -58,7 +59,8 @@ export default function Navbar() {
         'User': User,
         'Contact': Contact,
         'Phone': Phone,
-        'Video': Video
+        'Video': Video,
+        'Smartphone': Smartphone
     };
 
     const fetchServices = useCallback(async () => {
@@ -121,13 +123,21 @@ export default function Navbar() {
                 headline: "Lær hva AI kan gjøre for deg og din økonomi",
                 subtext: "Oppdag ulike metoder og verktøy vi har for å hjelpe deg med å drive din bedrift",
                 action: "Se oversikt",
-                items: services
-                    .filter(s => s.name.toLowerCase().includes('nettside'))
-                    .map(s => ({
-                        name: s.name,
-                        href: s.href,
-                        icon: IconMap[s.icon_name] || Layers
-                    }))
+                items: [
+                    ...services
+                        .filter(s => s.name.toLowerCase().includes('nettside') || s.name.toLowerCase().includes('app'))
+                        .map(s => ({
+                            name: s.name,
+                            href: s.href,
+                            icon: IconMap[s.icon_name] || Layers
+                        })),
+                    // Ensure App Utvikling is always there if data might be missing
+                    ...(services.some(s => s.name.toLowerCase().includes('app')) ? [] : [{
+                        name: "App utvikling",
+                        href: "/app-utvikling",
+                        icon: Smartphone
+                    }])
+                ]
             }
         },
         {
@@ -174,7 +184,13 @@ export default function Navbar() {
                                 onMouseEnter={() => link.hasDropdown && setActiveDropdown(link.name)}
                             >
                                 <Link
-                                    href={link.href}
+                                    href={link.hasDropdown ? "#" : link.href}
+                                    onClick={(e) => {
+                                        if (link.hasDropdown) {
+                                            e.preventDefault();
+                                            setActiveDropdown(activeDropdown === link.name ? null : link.name);
+                                        }
+                                    }}
                                     className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium transition-colors rounded-full ${activeDropdown === link.name
                                         ? "bg-white text-black"
                                         : "text-gray-300 hover:text-white hover:bg-white/10"
@@ -187,7 +203,7 @@ export default function Navbar() {
                                 {/* Dropdown Logic */}
                                 <AnimatePresence>
                                     {link.hasDropdown && activeDropdown === link.name && (
-                                        <div className="absolute top-16 left-0 pt-2 w-max">
+                                        <div className="absolute top-16 left-0 w-max">
                                             {link.megaMenu ? (
                                                 /* Mega Menu Card */
                                                 <motion.div
@@ -225,9 +241,8 @@ export default function Navbar() {
                                                         </div>
                                                     </div>
 
-                                                    {/* Right Column: Grid with max 3 rows */}
                                                     <div className="grid grid-flow-col grid-rows-3 gap-2">
-                                                        {loadingServices ? (
+                                                        {loadingServices && link.megaMenu.items.length === 0 ? (
                                                             <div className="col-span-2 flex items-center justify-center h-full">
                                                                 <Loader2 className="w-6 h-6 animate-spin text-gray-200" />
                                                             </div>
@@ -304,6 +319,7 @@ export default function Navbar() {
                         activeDropdown={activeDropdown}
                         setActiveDropdown={setActiveDropdown}
                         setIsMobileMenuOpen={setIsMobileMenuOpen}
+                        user={user}
                     />
                 )}
             </AnimatePresence>
@@ -329,7 +345,7 @@ export default function Navbar() {
 
 import { createPortal } from "react-dom";
 
-function MobileMenuOverlay({ navLinks, activeDropdown, setActiveDropdown, setIsMobileMenuOpen }: any) {
+function MobileMenuOverlay({ navLinks, activeDropdown, setActiveDropdown, setIsMobileMenuOpen, user }: any) {
     if (typeof document === "undefined") return null;
 
     return createPortal(
@@ -456,14 +472,25 @@ function MobileMenuOverlay({ navLinks, activeDropdown, setActiveDropdown, setIsM
 
                 {/* Mobile Actions */}
                 <div className="mt-auto pt-6 flex flex-col gap-3">
-                    <Link
-                        href="/login"
-                        className="w-full h-12 flex items-center justify-center gap-2 rounded-full border border-white/10 text-white font-medium text-base hover:bg-white/5 transition-colors"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                        <User size={18} />
-                        Logg inn
-                    </Link>
+                    {user ? (
+                        <Link
+                            href="/dashboard"
+                            className="w-full h-12 flex items-center justify-center gap-2 rounded-full border border-white/10 text-white font-medium text-base hover:bg-white/5 transition-colors"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                            <User size={18} />
+                            Dashboard
+                        </Link>
+                    ) : (
+                        <Link
+                            href="/login"
+                            className="w-full h-12 flex items-center justify-center gap-2 rounded-full border border-white/10 text-white font-medium text-base hover:bg-white/5 transition-colors"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                            <User size={18} />
+                            Logg inn
+                        </Link>
+                    )}
                     <Link
                         href="/kontakt"
                         className="w-full h-12 flex items-center justify-center gap-2 bg-white text-black rounded-full font-medium text-base hover:bg-gray-100 transition-colors"

@@ -46,7 +46,7 @@ export default function AdminModal({ isOpen, onClose, title, children }: AdminMo
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
                         transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                        className="relative w-full max-w-2xl bg-[#0A0A0A] border border-white/10 rounded-3xl overflow-hidden shadow-2xl"
+                        className="relative w-full max-w-3xl bg-[#0A0A0A] border border-white/10 rounded-3xl overflow-hidden shadow-2xl"
                     >
                         {/* Header */}
                         <div className="px-8 py-6 border-b border-white/10 flex items-center justify-between bg-white/[0.02]">

@@ -208,17 +208,20 @@ export default function AdminAnalyticsDashboard() {
                     </div>
 
                     <div className="flex-1 flex items-end gap-2 md:gap-3 px-4">
-                        {chartData.map((h, i) => (
-                            <div key={i} className="flex-1 group relative">
-                                <div
-                                    className="w-full bg-gradient-to-t from-purple-600/20 to-purple-400 rounded-t-sm transition-all duration-700 group-hover:bg-blue-400"
-                                    style={{ height: `${Math.max(h * 5, 2)}%`, minHeight: '2px' }}
-                                />
-                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-white text-black text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
-                                    {h} besøk
+                        {(() => {
+                            const maxVal = Math.max(...chartData, 1); // Use 1 as minimum to avoid division by zero
+                            return chartData.map((h, i) => (
+                                <div key={i} className="flex-1 group relative">
+                                    <div
+                                        className="w-full bg-gradient-to-t from-purple-600/20 to-purple-400 rounded-t-sm transition-all duration-700 group-hover:bg-blue-400"
+                                        style={{ height: `${(h / maxVal) * 100}%`, minHeight: '2px' }}
+                                    />
+                                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-white text-black text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-[100]">
+                                        {h} besøk
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ));
+                        })()}
                     </div>
 
                     <div className="flex justify-between mt-6 px-2 text-[10px] font-mono text-gray-500 uppercase tracking-widest border-t border-white/5 pt-4">

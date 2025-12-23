@@ -1,18 +1,18 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, Globe, Zap, Layout, Search } from "lucide-react";
+import { ArrowRight, Smartphone, Zap, Layers, Cpu } from "lucide-react";
 import Link from "next/link";
 import Navbar from "../components/Navbar";
 
-export default function NettsidePage() {
+export default function AppUtviklingPage() {
     return (
         <div className="bg-black text-white min-h-screen font-sans selection:bg-white selection:text-black">
             <Navbar />
 
             <main className="pt-40 pb-24 px-6 relative overflow-hidden">
                 {/* Background Glow */}
-                <div className="absolute top-1/4 -right-20 w-96 h-96 bg-blue-600/10 blur-[120px] rounded-full pointer-events-none" />
+                <div className="absolute top-1/4 -right-20 w-96 h-96 bg-purple-600/20 blur-[120px] rounded-full pointer-events-none" />
 
                 <div className="max-w-[1200px] mx-auto relative z-10">
 
@@ -22,17 +22,17 @@ export default function NettsidePage() {
                             <motion.span
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
-                                className="block text-blue-500 font-mono text-sm tracking-widest uppercase"
+                                className="block text-purple-500 font-mono text-sm tracking-widest uppercase"
                             >
-                                Webutvikling
+                                Apputvikling
                             </motion.span>
                             <motion.h1
                                 initial={{ y: 20, opacity: 0 }}
                                 animate={{ y: 0, opacity: 1 }}
                                 className="text-6xl md:text-8xl lg:text-9xl font-medium tracking-tighter leading-[0.9]"
                             >
-                                Designet for <br />
-                                konvertering.
+                                Fremtidens <br />
+                                mobilapper.
                             </motion.h1>
                             <motion.p
                                 initial={{ y: 20, opacity: 0 }}
@@ -40,7 +40,7 @@ export default function NettsidePage() {
                                 transition={{ delay: 0.1 }}
                                 className="text-xl md:text-2xl font-light text-gray-400 max-w-xl leading-relaxed"
                             >
-                                Vi bygger lynraske nettsider som ikke bare ser bra ut, men som faktisk konverterer besøkende til kunder.
+                                Vi utvikler native og cross-platform mobilapplikasjoner som kombinerer kraftig ytelse med et intuitivt design for iOS og Android.
                             </motion.p>
                         </div>
 
@@ -50,11 +50,11 @@ export default function NettsidePage() {
                             transition={{ duration: 1, ease: "easeOut" }}
                             className="relative"
                         >
-                            <div className="absolute inset-0 bg-blue-500/10 blur-3xl rounded-full" />
-                            <div className="relative rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl shadow-blue-500/5">
+                            <div className="absolute inset-0 bg-purple-500/10 blur-3xl rounded-full" />
+                            <div className="relative rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl shadow-purple-500/5">
                                 <img
-                                    src="/assets/images/web_preview.png"
-                                    alt="Website project preview"
+                                    src="/assets/images/app_preview.png"
+                                    alt="App development preview"
                                     className="w-full h-auto object-cover hover:scale-105 transition-transform duration-700"
                                 />
                             </div>
@@ -64,40 +64,40 @@ export default function NettsidePage() {
                     {/* Feature Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-20 border-b border-white/10 pb-20 mb-20">
                         <FeatureBlock
+                            icon={Smartphone}
+                            title="Cross-platform"
+                            description="Vi bruker rammeverk som gjør det mulig å bygge én app som fungerer perfekt på både iOS og Android, noe som sparer deg for både tid og kostnader."
+                        />
+                        <FeatureBlock
                             icon={Zap}
-                            title="Lynrask Ytelse"
-                            description="Vi optimaliserer hver linje med kode for å sikre markedets raskeste lastetider. Fordi hvert sekund teller for dine kunder."
+                            title="Native Ytelse"
+                            description="Appene våre er optimalisert for hastighet og respondstid, slik at brukerne dine får en flytende opplevelse som føles naturlig for plattformen."
                         />
                         <FeatureBlock
-                            icon={Layout}
-                            title="Unikt Design"
-                            description="Ingen ferdige maler. Vi designer nettsiden din fra bunnen av for å matche din merkevare og skille deg ut fra konkurrentene."
+                            icon={Layers}
+                            title="Moderne Grensesnitt"
+                            description="Vi fokuserer på moderne UX/UI-prinsipper for å skape apper som er like vakre å se på som de er enkle å bruke."
                         />
                         <FeatureBlock
-                            icon={Globe}
-                            title="Mobiloptimalisert"
-                            description="Over 60% av all trafikk kommer fra mobil. Nettsidene våre er bygget 'mobile-first' for en sømløs opplevelse på alle enheter."
-                        />
-                        <FeatureBlock
-                            icon={Search}
-                            title="SEO Grunnlag"
-                            description="Teknisk SEO er innebygd fra start. Vi strukturerer nettsiden slik at Google elsker den, og kundene finner deg."
+                            icon={Cpu}
+                            title="Avansert Logikk"
+                            description="Fra sanntidsdata og push-varsler til AI-integrasjoner – vi bygger appene med den nyeste teknologien for å gi deg et konkurransefortrinn."
                         />
                     </div>
 
                     {/* Value Prop / CTA Area */}
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12">
                         <div className="max-w-xl">
-                            <h2 className="text-4xl font-medium tracking-tight mb-4">Trenger du ny nettside?</h2>
+                            <h2 className="text-4xl font-medium tracking-tight mb-4">Klar for å realisere din app-idè?</h2>
                             <p className="text-gray-400 text-lg">
-                                Fra enkle landingssider til komplette bedriftsløsninger. Se våre pakker.
+                                Enten du er en startup eller en etablert bedrift, hjelper vi deg med å bringe din visjon til live i app-store.
                             </p>
                         </div>
                         <Link
-                            href="/priser"
-                            className="group inline-flex items-center gap-3 text-2xl font-medium border-b border-white pb-1 hover:text-blue-500 hover:border-blue-500 transition-colors"
+                            href="/kontakt"
+                            className="group inline-flex items-center gap-3 text-2xl font-medium border-b border-white pb-1 hover:text-purple-500 hover:border-purple-500 transition-colors"
                         >
-                            Se Web-pakker
+                            Start Prosjektet
                             <ArrowRight className="transition-transform group-hover:translate-x-2" />
                         </Link>
                     </div>
@@ -112,7 +112,7 @@ function FeatureBlock({ icon: Icon, title, description }: any) {
     return (
         <div>
             <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-6">
-                <Icon size={24} className="text-blue-500" />
+                <Icon size={24} className="text-purple-500" />
             </div>
             <h3 className="text-3xl font-medium tracking-tight mb-4 text-white">{title}</h3>
             <p className="text-gray-400 text-lg leading-relaxed font-light">{description}</p>

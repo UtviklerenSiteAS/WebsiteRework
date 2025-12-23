@@ -59,6 +59,7 @@ export default function ReferanseForm({ initialData, onSuccess }: ReferanseFormP
             // Upload new image if selected
             if (imageFile) {
                 imageUrl = await uploadImage(imageFile);
+
             }
 
             const data = {
@@ -68,6 +69,9 @@ export default function ReferanseForm({ initialData, onSuccess }: ReferanseFormP
                 tags: (formData.get("tags") as string).split(",").map(t => t.trim()).filter(t => t !== ""),
                 color: formData.get("color") as string,
                 image: imageUrl,
+                review_text: formData.get("review_text") as string,
+                review_author: formData.get("review_author") as string,
+                detailed_content: formData.get("detailed_content") as string,
             };
 
             if (initialData?.id) {
@@ -145,8 +149,41 @@ export default function ReferanseForm({ initialData, onSuccess }: ReferanseFormP
                     required
                     rows={4}
                     className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-white/30 transition-colors resize-none"
-                    placeholder="Hva gjorde vi for kunden?"
+                    placeholder="Kort beskrivelse (vises på forsiden)"
                 />
+            </div>
+
+            <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-400">Detaljert innhold (Full case-beskrivelse)</label>
+                <textarea
+                    name="detailed_content"
+                    defaultValue={initialData?.detailed_content}
+                    rows={6}
+                    className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-white/30 transition-colors resize-none"
+                    placeholder="Fortell mer om prosjektet, utfordringer og løsninger..."
+                />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-400">Kundeomtale (Valgfri)</label>
+                    <textarea
+                        name="review_text"
+                        defaultValue={initialData?.review_text}
+                        rows={3}
+                        className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-white/30 transition-colors resize-none"
+                        placeholder="Hva sa kunden?"
+                    />
+                </div>
+                <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-400">Omtalegiver (Navn/Tittel)</label>
+                    <input
+                        name="review_author"
+                        defaultValue={initialData?.review_author}
+                        className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-white/30 transition-colors"
+                        placeholder="f.eks. Ola Nordmann, CEO"
+                    />
+                </div>
             </div>
 
             <div className="space-y-2">
