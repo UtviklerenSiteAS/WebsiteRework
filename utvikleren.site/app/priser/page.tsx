@@ -118,7 +118,11 @@ export default function PricingPage() {
                                 description={category === 'Nettside Utvikling' ? "Fra enkle landingssider til skreddersydde plattformer." : "Skreddersydde løsninger for din bedrift."}
                             >
                                 {plans.filter(p => p.category === category).map(plan => (
-                                    <div key={plan.id} className="relative group">
+                                    <div 
+                                        key={plan.id} 
+                                        className="relative group cursor-pointer"
+                                        onClick={() => isAdmin && handleEdit(plan)}
+                                    >
                                         <PricingRow
                                             name={plan.name}
                                             oldPrice={plan.old_price}
@@ -129,8 +133,8 @@ export default function PricingPage() {
                                         />
                                         {isAdmin && (
                                             <button
-                                                onClick={() => handleEdit(plan)}
-                                                className={`absolute top-4 right-4 z-10 p-2 rounded-full border opacity-0 group-hover:opacity-100 transition-all ${plan.highlight ? 'bg-black/5 border-black/10 text-black hover:bg-black hover:text-white' : 'bg-white/5 border-white/10 text-white hover:bg-white hover:text-black'}`}
+                                                onClick={(e) => { e.stopPropagation(); handleEdit(plan); }}
+                                                className={`absolute top-4 right-4 z-10 p-2 rounded-full border opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all ${plan.highlight ? 'bg-black/5 border-black/10 text-black hover:bg-black hover:text-white' : 'bg-white/5 border-white/10 text-white hover:bg-white hover:text-black'}`}
                                             >
                                                 <Edit size={16} />
                                             </button>
