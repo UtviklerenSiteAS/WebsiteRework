@@ -163,7 +163,7 @@ export default function ReferanserPage() {
                                         {/* Content Overlay */}
                                         <div className="absolute inset-0 p-8 flex flex-col justify-end">
                                             <div className="space-y-4">
-                                                <div className="flex gap-2 mb-2">
+                                                <div className="flex flex-wrap gap-2 mb-2">
                                                     {project.tags.map((tag, i) => (
                                                         <span key={i} className="px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-xs font-mono text-white border border-white/10">
                                                             {tag}
