@@ -7,8 +7,8 @@ import { Cpu, Layout, Server, Lock, Zap } from "lucide-react";
 // Content Data - Aligned with Navbar Services & Focus on Economy
 const features = [
     {
-        title: "AI Resepsjonist",
-        description: "Reduser lønnskostnader og øk tilgjengeligheten. Vår AI-resepsjonist håndterer samtaler, bookinger og kundehenvendelser 24/7 uten behov for pauser eller overtidstillegg. Dette frigjør ansatte til å fokusere på verdiskapende arbeid.",
+        title: "AI Chatbot",
+        description: "Reduser lønnskostnader og øk tilgjengeligheten. Vår AI-chatbot håndterer samtaler, bookinger og kundehenvendelser 24/7 uten behov for pauser eller overtidstillegg. Dette frigjør ansatte til å fokusere på verdiskapende arbeid.",
         icon: Cpu,
         color: "blue",
         visual: (

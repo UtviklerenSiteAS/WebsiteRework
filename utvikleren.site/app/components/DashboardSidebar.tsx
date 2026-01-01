@@ -57,7 +57,7 @@ export default function DashboardSidebar() {
             href: "/dashboard/nettside-prosjekter",
         },
         {
-            label: "AI Resepsjonist",
+            label: "AI Chatbot",
             icon: <Zap size={20} />,
             href: "/dashboard/ai-resepsjonist",
         },

@@ -1,11 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, Phone, MessageSquare, Clock, ShieldCheck } from "lucide-react";
+import { ArrowRight, Phone, MessageSquare, Clock, ShieldCheck, Bot } from "lucide-react";
 import Link from "next/link";
 import Navbar from "../components/Navbar";
 
-export default function AiResepsjonistPage() {
+export default function AiChatbotPage() {
     return (
         <div className="bg-black text-white min-h-screen font-sans selection:bg-white selection:text-black">
             <Navbar />
@@ -27,8 +27,8 @@ export default function AiResepsjonistPage() {
                             animate={{ y: 0, opacity: 1 }}
                             className="text-6xl md:text-9xl font-medium tracking-tighter mb-8 leading-[0.9]"
                         >
-                            Døgnet rundt <br />
-                            tilgjengelighet.
+                            AI Chatbot <br />
+                            for din bedrift.
                         </motion.h1>
                         <motion.p
                             initial={{ y: 20, opacity: 0 }}
@@ -36,7 +36,7 @@ export default function AiResepsjonistPage() {
                             transition={{ delay: 0.1 }}
                             className="text-xl md:text-3xl font-light text-gray-400 max-w-3xl leading-relaxed"
                         >
-                            En AI-drevet resepsjonist som håndterer telefon, booking og kundesupport 24/7. Aldri gå glipp av et lead igjen.
+                            En intelligent chatbot som håndterer kundehenvendelser, booking og support 24/7. Øk konverteringen på nettsiden din med AI.
                         </motion.p>
                     </div>
 
@@ -45,31 +45,31 @@ export default function AiResepsjonistPage() {
                         <FeatureBlock
                             icon={Clock}
                             title="24/7 Tilgjengelig"
-                            description="AI-resepsjonisten sover aldri. Den svarer på henvendelser umiddelbart, uansett tidspunkt på døgnet, og sikrer at kundene dine alltid føler seg ivaretatt."
+                            description="AI-chatbotten sover aldri. Den svarer på henvendelser umiddelbart, uansett tidspunkt på døgnet, og sikrer at kundene dine alltid føler seg ivaretatt."
                         />
                         <FeatureBlock
-                            icon={Phone}
-                            title="Naturlig Tale"
-                            description="Med avansert stemmeteknologi kan AI-en føre naturlige samtaler på norsk, forstå dialekter og håndtere komplekse spørsmål like godt som et menneske."
+                            icon={Bot}
+                            title="Intelligent Respons"
+                            description="Vår AI forstår kontekst og kan svare på komplekse spørsmål om dine tjenester, akkurat som en erfaren medarbeider."
                         />
                         <FeatureBlock
                             icon={MessageSquare}
-                            title="Omnikanal Støtte"
-                            description="Ikke bare telefon. Den håndterer SMS, e-post og chat på nettsiden din, og samler all kommunikasjon i ett oversiktlig dashboard."
+                            title="Sømløs Chat"
+                            description="En moderne chat-opplevelse som integreres direkte på din nettside, SMS eller Facebook Messenger."
                         />
                         <FeatureBlock
                             icon={ShieldCheck}
-                            title="Sømløs Integrasjon"
-                            description="Integreres direkte med dine eksisterende systemer (CRM, Kalender, ERP) for å booke møter eller oppdatere kundekort automatisk."
+                            title="Enkel Integrasjon"
+                            description="Integreres direkte med dine eksisterende systemer for å booke møter eller overføre leads til din e-post automatisk."
                         />
                     </div>
 
                     {/* Value Prop / CTA Area */}
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12">
                         <div className="max-w-xl">
-                            <h2 className="text-4xl font-medium tracking-tight mb-4">Klar for å effektivisere?</h2>
+                            <h2 className="text-4xl font-medium tracking-tight mb-4">Klar for å automatisere?</h2>
                             <p className="text-gray-400 text-lg">
-                                Start med vår Standard-pakke eller skaler opp til Pro for full CRM-integrasjon.
+                                Start med vår Standard-pakke eller skaler opp til Pro for full integrasjon med dine systemer.
                             </p>
                         </div>
                         <Link
@@ -98,3 +98,4 @@ function FeatureBlock({ icon: Icon, title, description }: any) {
         </div>
     );
 }
+

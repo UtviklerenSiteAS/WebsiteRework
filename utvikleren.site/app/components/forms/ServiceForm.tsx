@@ -126,13 +126,13 @@ export default function ServiceForm({ onSuccess }: ServiceFormProps) {
                                 value={service.name}
                                 onChange={(e) => handleChange(service.id, "name", e.target.value)}
                                 className="px-3 py-2 bg-black/40 border border-white/10 rounded-lg focus:outline-none focus:border-white/30 text-sm"
-                                placeholder="Navn (f.eks. AI Resepsjonist)"
+                                placeholder="Navn (f.eks. AI Chatbot)"
                             />
                             <input
                                 value={service.href}
                                 onChange={(e) => handleChange(service.id, "href", e.target.value)}
                                 className="px-3 py-2 bg-black/40 border border-white/10 rounded-lg focus:outline-none focus:border-white/30 text-sm"
-                                placeholder="Link (f.eks. /ai-resepsjonist)"
+                                placeholder="Link (f.eks. /ai-chatbot)"
                             />
                             <select
                                 value={service.icon_name}

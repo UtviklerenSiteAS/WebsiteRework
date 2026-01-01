@@ -125,7 +125,11 @@ export default function Navbar() {
                 action: "Se oversikt",
                 items: [
                     ...services
-                        .filter(s => s.name.toLowerCase().includes('nettside') || s.name.toLowerCase().includes('app'))
+                        .filter(s =>
+                            s.name.toLowerCase().includes('nettside') ||
+                            s.name.toLowerCase().includes('app') ||
+                            s.name.toLowerCase().includes('ai')
+                        )
                         .map(s => ({
                             name: s.name,
                             href: s.href,
@@ -136,6 +140,12 @@ export default function Navbar() {
                         name: "App utvikling",
                         href: "/app-utvikling",
                         icon: Smartphone
+                    }]),
+                    // Add AI Chatbot if not already present
+                    ...(services.some(s => s.name.toLowerCase().includes('chatbot') || s.name.toLowerCase().includes('resepsjonist')) ? [] : [{
+                        name: "AI Chatbot",
+                        href: "/ai-chatbot",
+                        icon: Bot
                     }])
                 ]
             }
