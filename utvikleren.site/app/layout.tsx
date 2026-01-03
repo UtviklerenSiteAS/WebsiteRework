@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   title: "Utvikleren.site",
   description: "Send henvendelse, få en demo, uten kostnader. Vi bygger fremtidens digitale løsninger.",
   verification: {
-    google: "s4i35jYi6uqJAnNDfL9c8_4bgfCqTFS0laq1NZEKsnU",
+    google: "b3h5G9EOOQ0YAOXk42F0W-X_N9AuRIRAL4l6qalloE4",
   },
 };
 
