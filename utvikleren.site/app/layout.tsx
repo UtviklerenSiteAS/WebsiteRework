@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Utvikleren.site",
   description: "Send henvendelse, få en demo, uten kostnader. Vi bygger fremtidens digitale løsninger.",
+  verification: {
+    google: "s4i35jYi6uqJAnNDfL9c8_4bgfCqTFS0laq1NZEKsnU",
+  },
 };
 
 import { Suspense } from "react";
