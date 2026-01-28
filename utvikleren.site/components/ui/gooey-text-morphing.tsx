@@ -27,13 +27,26 @@ export function GooeyText({
     let morph = 0;
     let cooldown = cooldownTime;
 
+    const isDesktop = React.useRef(true);
+
+    React.useEffect(() => {
+      // Check initial screen size
+      if (typeof window !== 'undefined') {
+        isDesktop.current = window.matchMedia('(min-width: 768px)').matches;
+      }
+    }, []);
+
     const setMorph = (fraction: number) => {
       if (text1Ref.current && text2Ref.current) {
-        text2Ref.current.style.filter = `blur(${Math.min(8 / fraction - 8, 100)}px)`;
-        text2Ref.current.style.opacity = `${Math.pow(fraction, 0.4) * 100}%`;
+        // Only apply blur on desktop
+        if (isDesktop.current) {
+          text2Ref.current.style.filter = `blur(${Math.min(8 / fraction - 8, 100)}px)`;
+          text1Ref.current.style.filter = `blur(${Math.min(8 / fraction - 8, 100)}px)`;
+        }
 
+        // Always apply opacity
+        text2Ref.current.style.opacity = `${Math.pow(fraction, 0.4) * 100}%`;
         fraction = 1 - fraction;
-        text1Ref.current.style.filter = `blur(${Math.min(8 / fraction - 8, 100)}px)`;
         text1Ref.current.style.opacity = `${Math.pow(fraction, 0.4) * 100}%`;
       }
     };
