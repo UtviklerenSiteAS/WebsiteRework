@@ -1,6 +1,11 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
+    turbopack: {
+        // Fixes Turbopack selecting the wrong workspace root when multiple lockfiles exist.
+        root: path.join(__dirname),
+    },
     images: {
         remotePatterns: [
             {

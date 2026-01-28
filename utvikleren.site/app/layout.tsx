@@ -1,41 +1,78 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import BubbleMenu from "./components/BubbleMenu";
+import { Suspense } from "react";
+import AuthCallbackListener from "./components/AuthCallbackListener";
+import { Toaster } from "./components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Utvikleren.site",
-  description: "Send henvendelse, få en demo, uten kostnader. Vi bygger fremtidens digitale løsninger.",
-  verification: {
-    google: "b3h5G9EOOQ0YAOXk42F0W-X_N9AuRIRAL4l6qalloE4",
-  },
+  description: "Professional development services",
 };
-
-import { Suspense } from "react";
-import AnalyticsTracker from "./components/AnalyticsTracker";
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const menuItems = [
+    {
+      label: 'hjem',
+      href: '/',
+      ariaLabel: 'Hjem',
+      rotation: -8,
+      hoverStyles: { bgColor: '#5227FF', textColor: '#ffffff' }
+    },
+    {
+      label: 'referanser',
+      href: '/referanser',
+      ariaLabel: 'Referanser',
+      rotation: 8,
+      hoverStyles: { bgColor: '#8b5cf6', textColor: '#ffffff' }
+    },
+    {
+      label: 'om oss',
+      href: '/om-oss',
+      ariaLabel: 'Om oss',
+      rotation: 8,
+      hoverStyles: { bgColor: '#10b981', textColor: '#ffffff' }
+    },
+    {
+      label: 'tjenester',
+      href: '/tjenester',
+      ariaLabel: 'Tjenester',
+      rotation: -8,
+      hoverStyles: { bgColor: '#f59e0b', textColor: '#ffffff' }
+    },
+    {
+      label: 'ta kontakt',
+      href: '/kontakt',
+      ariaLabel: 'Ta kontakt',
+      rotation: 12,
+      hoverStyles: { bgColor: '#3b82f6', textColor: '#ffffff' }
+    }
+  ];
+
+  // ... existing code ...
+
   return (
     <html lang="no">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-x-hidden`}
-      >
+      <body>
+        <BubbleMenu
+          logo="/Logo.png"
+          items={menuItems}
+          menuAriaLabel="Toggle navigation"
+          menuBg="#ffffff"
+          menuContentColor="#000000"
+          useFixedPosition={true}
+          animationEase="back.out(1.5)"
+          animationDuration={0.5}
+          staggerDelay={0.12}
+        />
         <Suspense fallback={null}>
-          <AnalyticsTracker />
+          <AuthCallbackListener />
         </Suspense>
+        <Toaster />
         {children}
       </body>
     </html>

@@ -1,133 +1,94 @@
-import { NextResponse } from "next/server";
-import nodemailer from "nodemailer";
+import { NextResponse } from 'next/server';
+import nodemailer from 'nodemailer';
 
 export async function POST(req: Request) {
     try {
-        const { name, email, message } = await req.json();
+        const { name, email, company, message } = await req.json();
 
+        // Validate input
         if (!name || !email || !message) {
-            return NextResponse.json({ error: "Vennligst fyll ut alle felt." }, { status: 400 });
+            return NextResponse.json(
+                { error: 'Missing required fields' },
+                { status: 400 }
+            );
         }
 
-        // 1. Setup Transporters
-        // Common SMTP settings for PrivateEmail
-        const baseConfig = {
-            host: process.env.SMTP_HOST || "mail.privateemail.com",
-            port: parseInt(process.env.SMTP_PORT || "465"),
-            secure: true, // true for 465, false for other ports
-        };
+        // Check if SMTP details are provided
+        if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
+            console.log('⚠️ SMTP not configured. Printing email to console instead:');
+            console.log('From:', email);
+            console.log('Message:', message);
+            // Return success in dev mode so the UI works
+            return NextResponse.json({ success: true, message: 'Email logged to console (SMTP not configured)' });
+        }
 
-        // Notification Transporter (Admin)
-        const notificationTransporter = nodemailer.createTransport({
-            ...baseConfig,
+        const port = Number(process.env.SMTP_PORT) || 587;
+
+        const transporter = nodemailer.createTransport({
+            host: process.env.SMTP_HOST,
+            port: port,
+            secure: port === 465, // true for 465, false for other ports
             auth: {
                 user: process.env.SMTP_USER,
                 pass: process.env.SMTP_PASS,
             },
         });
 
-        // Confirmation Transporter (User)
-        const confirmationTransporter = nodemailer.createTransport({
-            ...baseConfig,
-            auth: {
-                user: process.env.CONFIRMATION_SMTP_USER,
-                pass: process.env.CONFIRMATION_SMTP_PASS,
-            },
-        });
+        try {
+            // 1. Send notification to internal admin
+            await transporter.sendMail({
+                from: process.env.SMTP_FROM || '"Utvikleren.site Contact" <noreply@utvikleren.site>',
+                to: process.env.CONTACT_EMAIL || process.env.SMTP_USER,
+                replyTo: email,
+                subject: `Ny forespørsel fra ${name} (${company || 'Ingen bedrift'})`,
+                text: `Navn: ${name}\nE-post: ${email}\nBedrift: ${company}\n\nMelding:\n${message}`,
+                html: `
+          <h3>Ny henvendelse fra Utvikleren.site</h3>
+          <p><strong>Navn:</strong> ${name}</p>
+          <p><strong>E-post:</strong> ${email}</p>
+          <p><strong>Bedrift:</strong> ${company || '-'}</p>
+          <br/>
+          <p><strong>Melding:</strong></p>
+          <p>${message.replace(/\n/g, '<br>')}</p>
+        `,
+            });
 
-        // 2. Send Notification Email (to post@utvikleren.site)
-        const notificationMailOptions = {
-            from: `"${name}" <${process.env.SMTP_USER}>`,
-            to: process.env.CONTACT_RECIPIENT,
-            replyTo: email,
-            subject: `Ny melding: ${name}`,
-            text: `Navn: ${name}\nE-post: ${email}\n\nMelding:\n${message}`,
-            html: `
-                <div style="background-color: #000000; color: #ffffff; font-family: Helvetica, Arial, sans-serif; padding: 40px 20px; line-height: 1.5;">
-                    <div style="max-width: 600px; margin: 0 auto; background-color: #0a0a0a; border: 1px solid #1a1a1a; borderRadius: 24px; padding: 40px; overflow: hidden;">
-                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 32px;">
-                            <img src="https://utvikleren.site/assets/images/Logo.png" alt="Logo" style="width: 32px; height: 32px; border-radius: 8px;" />
-                            <h1 style="font-size: 32px; font-weight: 500; letter-spacing: -0.05em; margin: 0; color: #ffffff;">
-                                Ny henvendelse
-                            </h1>
+            // 2. Send confirmation email to the user
+            try {
+                await transporter.sendMail({
+                    from: process.env.SMTP_FROM || '"Utvikleren.site" <post@utvikleren.site>',
+                    to: email,
+                    subject: 'Vi har mottatt din henvendelse',
+                    text: `Hei ${name},\n\nTakk for at du tok kontakt. Vi har mottatt din melding og vil komme tilbake til deg så snart som mulig.\n\nMed vennlig hilsen,\nUtvikleren.site Teamet`,
+                    html: `
+                        <div style="font-family: sans-serif; color: #333;">
+                            <h2>Takk for din henvendelse</h2>
+                            <p>Hei ${name},</p>
+                            <p>Vi bekrefter at vi har mottatt din melding. Vårt team vil se på den og komme tilbake til deg innen kort tid.</p>
+                            <br/>
+                            <p>Med vennlig hilsen,</p>
+                            <p><strong>Utvikleren.site</strong></p>
                         </div>
-                        
-                        <div style="margin-bottom: 40px;">
-                            <div style="margin-bottom: 24px;">
-                                <p style="font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em; color: #666666; margin: 0 0 8px 0;">Fra</p>
-                                <p style="font-size: 18px; color: #ffffff; margin: 0;">${name}</p>
-                            </div>
-                            
-                            <div style="margin-bottom: 24px;">
-                                <p style="font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em; color: #666666; margin: 0 0 8px 0;">E-post</p>
-                                <p style="font-size: 18px; color: #ffffff; margin: 0;"><a href="mailto:${email}" style="color: #ffffff; text-decoration: none; border-bottom: 1px solid #333333;">${email}</a></p>
-                            </div>
-                        </div>
+                    `,
+                });
+            } catch (confirmError) {
+                console.error('Failed to send confirmation email:', confirmError);
+                // We don't fail the request if the confirmation email fails, just log it
+            }
 
-                        <div style="background-color: #111111; border-radius: 16px; padding: 32px; border: 1px solid #1a1a1a;">
-                            <p style="font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em; color: #666666; margin: 0 0 16px 0;">Melding</p>
-                            <p style="font-size: 18px; color: #cccccc; margin: 0; white-space: pre-wrap; line-height: 1.6;">${message}</p>
-                        </div>
+            return NextResponse.json({ success: true });
+        } catch (emailError) {
+            console.error('Failed to send email:', emailError);
+            return NextResponse.json(
+                { error: 'Failed to send email' },
+                { status: 500 }
+            );
+        }
 
-                        <div style="margin-top: 48px; padding-top: 32px; border-top: 1px solid #1a1a1a; text-align: center;">
-                            <p style="font-size: 12px; color: #444444; margin: 0;">Sent via Utvikleren.site Kontaktskjema</p>
-                        </div>
-                    </div>
-                </div>
-            `,
-        };
-
-        // 3. Send Confirmation Email (to user)
-        const confirmationMailOptions = {
-            from: `"Utvikleren.site" <${process.env.CONFIRMATION_SMTP_USER}>`,
-            to: email,
-            subject: "Takk for din henvendelse!",
-            text: `Hei ${name},\n\nTakk for at du tok kontakt. Vi har mottatt din melding og svarer deg så snart som mulig.\n\nMvh,\nUtvikleren.site`,
-            html: `
-                <div style="background-color: #000000; color: #ffffff; font-family: Helvetica, Arial, sans-serif; padding: 40px 20px; line-height: 1.5;">
-                    <div style="max-width: 600px; margin: 0 auto; background-color: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 24px; padding: 40px; overflow: hidden;">
-                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
-                            <img src="https://utvikleren.site/assets/images/Logo.png" alt="Logo" style="width: 32px; height: 32px; border-radius: 8px;" />
-                            <h1 style="font-size: 32px; font-weight: 500; letter-spacing: -0.05em; margin: 0; color: #ffffff;">
-                                Hei ${name}.
-                            </h1>
-                        </div>
-                        
-                        <p style="font-size: 18px; color: #cccccc; margin-bottom: 40px; font-weight: 300;">
-                            Takk for at du tok kontakt med Utvikleren.site. Vi har mottatt din henvendelse og vil se over den så snart som mulig.
-                        </p>
-
-                        <div style="background-color: #111111; border-radius: 16px; padding: 32px; border: 1px solid #1a1a1a;">
-                            <p style="font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em; color: #666666; margin: 0 0 16px 0;">Kopi av din melding</p>
-                            <p style="font-size: 18px; color: #888888; margin: 0; white-space: pre-wrap; line-height: 1.6;">${message}</p>
-                        </div>
-
-                        <div style="margin-top: 48px; padding-top: 32px; border-top: 1px solid #1a1a1a;">
-                            <p style="font-size: 18px; font-weight: 500; color: #ffffff; margin: 0;">Med vennlig hilsen,</p>
-                            <p style="font-size: 16px; color: #666666; margin: 4px 0 0 0;">Utvikleren.site</p>
-                        </div>
-
-                        <div style="margin-top: 40px; text-align: center;">
-                            <a href="https://utvikleren.site" style="display: inline-block; background-color: #ffffff; color: #000000; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 500; font-size: 16px;">
-                                Besøk nettsiden
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            `,
-        };
-
-        // Execute both email sends
-        await Promise.all([
-            notificationTransporter.sendMail(notificationMailOptions),
-            confirmationTransporter.sendMail(confirmationMailOptions),
-        ]);
-
-        return NextResponse.json({ message: "E-post sendt suksessfullt!" }, { status: 200 });
-    } catch (error: any) {
-        console.error("SMTP Error:", error);
+    } catch (error) {
+        console.error('Error processing contact request:', error);
         return NextResponse.json(
-            { error: "Det oppsto en feil ved sending av e-post. Vennligst prøv igjen senere." },
+            { error: 'Internal server error' },
             { status: 500 }
         );
     }

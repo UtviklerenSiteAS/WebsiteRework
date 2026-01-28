@@ -1,516 +1,236 @@
 "use client";
 
-import Link from "next/link";
-import Image from "next/image";
-import { useEffect, useState, useCallback } from "react";
-import { createClient } from "@/lib/supabase/client";
-import { User as SupabaseUser } from "@supabase/supabase-js";
-import {
-    Menu,
-    X,
-    ChevronDown,
-    ChevronRight,
-    Package,
-    Layers,
-    CreditCard,
-    FileText,
-    BookOpen,
-    Download,
-    User,
-    Bot,
-    FolderKanban,
-    Settings,
-    Contact,
-    Phone,
-    Loader2,
-    Video,
-    Smartphone
-} from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import AdminModal from "./ui/AdminModal";
-import ServiceForm from "./forms/ServiceForm";
+import React, { useState, useEffect } from 'react';
+import { gsap } from 'gsap';
+import Link from 'next/link';
 
-export default function Navbar() {
-    const [isScrolled, setIsScrolled] = useState(false);
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-    const [user, setUser] = useState<SupabaseUser | null>(null);
-    const [services, setServices] = useState<any[]>([]);
-    const [loadingServices, setLoadingServices] = useState(true);
-    const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
-    const [mounted, setMounted] = useState(false);
-    const supabase = createClient();
+// #region reference
+
+export interface NavbarMenuItem {
+    label: string;
+    href: string;
+}
+
+export interface NavbarProps {
+    logoSrc?: string;
+    menuItems?: NavbarMenuItem[];
+    socialLinks?: { label: string; href: string }[];
+    accentColor?: string;
+}
+
+const Navbar: React.FC<NavbarProps> = ({
+    logoSrc = '/Logo.png',
+    menuItems = [
+        { label: 'Home', href: '/' },
+        { label: 'About', href: '/about' },
+        { label: 'Services', href: '/services' },
+        { label: 'Contact', href: '/contact' }
+    ],
+    socialLinks = [
+        { label: 'Twitter', href: 'https://twitter.com' },
+        { label: 'GitHub', href: 'https://github.com' },
+        { label: 'LinkedIn', href: 'https://linkedin.com' }
+    ],
+    accentColor = '#5227FF'
+}) => {
+    const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
-        setMounted(true);
-    }, []);
+        if (isOpen) {
+            // Animate menu open
+            gsap.to('.nav-menu-overlay', {
+                x: 0,
+                duration: 0.4,
+                ease: 'power4.out'
+            });
 
-    // Icon Mapping Utility
-    const IconMap: { [key: string]: any } = {
-        'Bot': Bot,
-        'FolderKanban': FolderKanban,
-        'Settings': Settings,
-        'Package': Package,
-        'Layers': Layers,
-        'CreditCard': CreditCard,
-        'FileText': FileText,
-        'BookOpen': BookOpen,
-        'Download': Download,
-        'User': User,
-        'Contact': Contact,
-        'Phone': Phone,
-        'Video': Video,
-        'Smartphone': Smartphone
+            gsap.to('.nav-menu-item', {
+                y: 0,
+                opacity: 1,
+                duration: 0.5,
+                stagger: 0.05,
+                ease: 'power3.out',
+                delay: 0.1
+            });
+
+            gsap.to('.nav-social-item', {
+                y: 0,
+                opacity: 1,
+                duration: 0.5,
+                stagger: 0.05,
+                ease: 'power3.out',
+                delay: 0.2
+            });
+
+            // Prevent body scroll
+            document.body.style.overflow = 'hidden';
+        } else {
+            // Animate menu close
+            gsap.to('.nav-menu-overlay', {
+                x: '100%',
+                duration: 0.5,
+                ease: 'power3.in'
+            });
+
+            // Reset menu items
+            gsap.set('.nav-menu-item', { y: 30, opacity: 0 });
+            gsap.set('.nav-social-item', { y: 20, opacity: 0 });
+
+            // Re-enable body scroll
+            document.body.style.overflow = '';
+        }
+    }, [isOpen]);
+
+    const toggleMenu = () => {
+        setIsOpen(!isOpen);
     };
-
-    const fetchServices = useCallback(async () => {
-        setLoadingServices(true);
-        try {
-            const { data, error } = await supabase
-                .from('services')
-                .select('*')
-                .order('order', { ascending: true });
-
-            if (error) throw error;
-            setServices(data || []);
-        } catch (error) {
-            console.error("Error fetching services:", error);
-        } finally {
-            setLoadingServices(false);
-        }
-    }, [supabase]);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            setIsScrolled(window.scrollY > 20);
-        };
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
-
-    useEffect(() => {
-        async function fetchUser() {
-            const { data: { user } } = await supabase.auth.getUser();
-            setUser(user);
-        }
-        fetchUser();
-        fetchServices();
-
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            setUser(session?.user ?? null);
-        });
-
-        return () => subscription.unsubscribe();
-    }, [supabase, fetchServices]);
-
-    const handleServiceSuccess = () => {
-        setIsServiceModalOpen(false);
-        fetchServices();
-    };
-
-    const navLinks = [
-        {
-            name: "Referanser",
-            href: "/referanser",
-            icon: Package
-        },
-        {
-            name: "Tjenester",
-            href: "/tjenester",
-            icon: Layers,
-            hasDropdown: true,
-            megaMenu: {
-                headline: "Lær hva AI kan gjøre for deg og din økonomi",
-                subtext: "Oppdag ulike metoder og verktøy vi har for å hjelpe deg med å drive din bedrift",
-                action: "Se oversikt",
-                items: [
-                    ...services
-                        .filter(s =>
-                            s.name.toLowerCase().includes('nettside') ||
-                            s.name.toLowerCase().includes('app') ||
-                            s.name.toLowerCase().includes('ai')
-                        )
-                        .map(s => ({
-                            name: s.name,
-                            href: s.href,
-                            icon: IconMap[s.icon_name] || Layers
-                        })),
-                    // Ensure App Utvikling is always there if data might be missing
-                    ...(services.some(s => s.name.toLowerCase().includes('app')) ? [] : [{
-                        name: "App utvikling",
-                        href: "/app-utvikling",
-                        icon: Smartphone
-                    }]),
-                    // Add AI Chatbot if not already present
-                    ...(services.some(s => s.name.toLowerCase().includes('chatbot') || s.name.toLowerCase().includes('resepsjonist')) ? [] : [{
-                        name: "AI Chatbot",
-                        href: "/ai-chatbot",
-                        icon: Bot
-                    }])
-                ]
-            }
-        },
-        {
-            name: "Priser",
-            href: "/priser",
-            icon: CreditCard
-        },
-        {
-            name: "Blog",
-            href: "/blog",
-            icon: FileText
-        }
-    ];
 
     return (
-        <nav
-            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-transparent ${isScrolled ? "bg-black/80 backdrop-blur-md border-white/10" : "bg-transparent"
-                }`}
-            onMouseLeave={() => setActiveDropdown(null)}
-        >
-            <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between relative">
+        <>
+            {/* Fixed Navbar */}
+            <nav className="fixed top-0 left-0 w-full z-[100] px-8 py-6 flex items-center justify-between pointer-events-none">
+                {/* Logo */}
+                <Link href="/" className="pointer-events-auto">
+                    <img
+                        src={logoSrc}
+                        alt="Logo"
+                        className="h-8 w-auto object-contain"
+                    />
+                </Link>
 
-                {/* Left Section: Logo + Nav Links */}
-                <div className="flex items-center gap-10">
-                    {/* Logo */}
-                    <Link href="/" className="flex items-center gap-3">
-                        <Image
-                            src="/assets/images/Logo.png"
-                            alt="Logo"
-                            width={40}
-                            height={40}
-                            className="h-8 w-8"
-                            priority
+                {/* Right Side Actions */}
+                <div className="flex items-center gap-4 pointer-events-auto z-[60]">
+                    {/* Profile Button */}
+                    <button
+                        className="profile-btn relative w-12 h-12 flex items-center justify-center rounded-full bg-white text-black hover:bg-gray-200 transition-colors cursor-pointer shadow-lg"
+                        aria-label="Profile"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                        </svg>
+                    </button>
+
+                    {/* Hamburger Button */}
+                    <button
+                        onClick={toggleMenu}
+                        className="hamburger-btn relative w-12 h-12 flex flex-col items-center justify-center gap-[5px] bg-white rounded-full cursor-pointer shadow-lg hover:bg-gray-200 transition-colors"
+                        aria-label={isOpen ? 'Close menu' : 'Open menu'}
+                        aria-expanded={isOpen}
+                    >
+                        <span
+                            className={`hamburger-line block w-5 h-[2px] bg-black rounded-full transition-all duration-300 ${isOpen ? 'rotate-45 translate-y-[7px]' : ''
+                                }`}
                         />
-                        <span className="text-xl font-medium tracking-tight text-white font-bold">Utvikleren.site</span>
-                    </Link>
+                        <span
+                            className={`hamburger-line block w-5 h-[2px] bg-black rounded-full transition-all duration-300 ${isOpen ? 'opacity-0' : ''
+                                }`}
+                        />
+                        <span
+                            className={`hamburger-line block w-5 h-[2px] bg-black rounded-full transition-all duration-300 ${isOpen ? '-rotate-45 -translate-y-[7px]' : ''
+                                }`}
+                        />
+                    </button>
+                </div>
+            </nav>
 
-                    {/* Desktop Links */}
-                    <div className="hidden md:flex items-center gap-1">
-                        {navLinks.map((link) => (
-                            <div
-                                key={link.name}
-                                className="relative group h-16 flex items-center"
-                                onMouseEnter={() => link.hasDropdown && setActiveDropdown(link.name)}
-                            >
-                                <Link
-                                    href={link.hasDropdown ? "#" : link.href}
-                                    onClick={(e) => {
-                                        if (link.hasDropdown) {
-                                            e.preventDefault();
-                                            setActiveDropdown(activeDropdown === link.name ? null : link.name);
-                                        }
-                                    }}
-                                    className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium transition-colors rounded-full ${activeDropdown === link.name
-                                        ? "bg-white text-black"
-                                        : "text-gray-300 hover:text-white hover:bg-white/10"
-                                        }`}
+            {/* Backdrop Overlay */}
+            {isOpen && (
+                <div
+                    className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity duration-500 fade-in border-none"
+                    onClick={() => setIsOpen(false)}
+                />
+            )}
+
+            {/* Side Menu Drawer */}
+            <div
+                className={`nav-menu-overlay fixed top-0 right-0 w-full sm:w-[480px] h-full bg-[#0a0a0a] z-50 transition-transform duration-500 ease-[cubic-bezier(0.32,0,0.67,0)] border-l border-white/10 shadow-2xl ${isOpen ? 'translate-x-0' : 'translate-x-full'
+                    }`}
+            >
+                <div className="flex flex-col h-full relative overflow-y-auto custom-scrollbar">
+
+                    {/* Decorative background element */}
+                    <div className="absolute top-0 right-0 w-full h-full overflow-hidden pointer-events-none opacity-20">
+                        <div className="absolute top-[-20%] right-[-20%] w-[80%] h-[80%] bg-purple-900/40 rounded-full blur-[100px]" />
+                    </div>
+
+                    <div className="flex flex-col justify-center min-h-full px-12 md:px-16 py-24">
+                        {/* Menu Items */}
+                        <ul className="space-y-4 mb-12 relative z-10 w-full">
+                            {menuItems.map((item, index) => (
+                                <li
+                                    key={index}
+                                    className="nav-menu-item translate-y-8"
+                                // removed opacity-0 here because GSAP handles it, avoiding initial flash invisible issues if GSAP fails
                                 >
-                                    {link.name}
-                                    {link.hasDropdown && <ChevronDown size={14} className={`transition-transform duration-200 ${activeDropdown === link.name ? "rotate-180" : ""}`} />}
-                                </Link>
+                                    <Link
+                                        href={item.href}
+                                        onClick={() => setIsOpen(false)}
+                                        className="text-5xl md:text-6xl font-bold text-white hover:text-white/70 transition-all duration-300 block relative group"
+                                        style={{
+                                            letterSpacing: '-0.03em'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            gsap.to(e.currentTarget, {
+                                                x: 10,
+                                                color: accentColor,
+                                                duration: 0.3,
+                                                ease: 'power2.out'
+                                            });
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            gsap.to(e.currentTarget, {
+                                                x: 0,
+                                                color: 'white',
+                                                duration: 0.3,
+                                                ease: 'power2.out'
+                                            });
+                                        }}
+                                    >
+                                        <span className="inline-block mr-4 text-xs font-mono font-normal opacity-30 align-middle">
+                                            {String(index + 1).padStart(2, '0')}
+                                        </span>
+                                        {item.label}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
 
-                                {/* Dropdown Logic */}
-                                <AnimatePresence>
-                                    {link.hasDropdown && activeDropdown === link.name && (
-                                        <div className="absolute top-16 left-0 w-max">
-                                            {link.megaMenu ? (
-                                                /* Mega Menu Card */
-                                                <motion.div
-                                                    initial={{ opacity: 0, y: 10, scale: 0.98 }}
-                                                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                                                    exit={{ opacity: 0, y: 5 }}
-                                                    transition={{ duration: 0.2 }}
-                                                    className="bg-white rounded-3xl p-8 shadow-2xl w-[700px] text-black grid grid-cols-[1fr_1.5fr] gap-8"
-                                                >
-                                                    {/* Left Column */}
-                                                    <div className="space-y-4">
-                                                        <h3 className="text-2xl font-medium leading-tight tracking-tight">
-                                                            {link.megaMenu.headline}
-                                                        </h3>
-                                                        <p className="text-gray-600 text-sm leading-relaxed">
-                                                            {link.megaMenu.subtext}
-                                                        </p>
-                                                        <div className="flex items-center gap-2 pt-2">
-                                                            <Link
-                                                                href="/ai-fordeler"
-                                                                onClick={() => setActiveDropdown(null)}
-                                                                className="flex-1 px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-black text-sm font-medium rounded-full transition-colors text-center"
-                                                            >
-                                                                {link.megaMenu.action}
-                                                            </Link>
-                                                            {user?.email === 'post@utvikleren.site' && (
-                                                                <button
-                                                                    onClick={() => { setActiveDropdown(null); setIsServiceModalOpen(true); }}
-                                                                    className="p-2.5 bg-black text-white rounded-full hover:bg-gray-800 transition-colors flex items-center justify-center shrink-0"
-                                                                    title="Endre tjenester"
-                                                                >
-                                                                    <Settings size={18} />
-                                                                </button>
-                                                            )}
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="grid grid-flow-col grid-rows-3 gap-2">
-                                                        {loadingServices && link.megaMenu.items.length === 0 ? (
-                                                            <div className="col-span-2 flex items-center justify-center h-full">
-                                                                <Loader2 className="w-6 h-6 animate-spin text-gray-200" />
-                                                            </div>
-                                                        ) : link.megaMenu.items.map((item) => (
-                                                            <Link
-                                                                key={item.name}
-                                                                href={item.href}
-                                                                className="group/item flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 transition-colors whitespace-nowrap"
-                                                            >
-                                                                <div className="flex items-center gap-3">
-                                                                    <div className="p-2 bg-gray-100 rounded-lg group-hover/item:bg-white border border-transparent group-hover/item:border-gray-200 transition-colors">
-                                                                        <item.icon size={18} className="text-gray-700" />
-                                                                    </div>
-                                                                    <span className="font-medium text-gray-900 text-sm">{item.name}</span>
-                                                                </div>
-                                                                <ChevronRight size={16} className="text-gray-400 group-hover/item:text-black transition-colors" />
-                                                            </Link>
-                                                        ))}
-                                                    </div>
-                                                </motion.div>
-                                            ) : (
-                                                /* Standard Dropdown (Resources) */
-                                                <motion.div
-                                                    initial={{ opacity: 0, y: 10 }}
-                                                    animate={{ opacity: 1, y: 0 }}
-                                                    exit={{ opacity: 0, y: 5 }}
-                                                    className="bg-white rounded-2xl p-2 shadow-xl w-48 overflow-hidden text-black"
-                                                >
-                                                </motion.div>
-                                            )}
-                                        </div>
-                                    )}
-                                </AnimatePresence>
-                            </div>
-                        ))}
+                        {/* Social Links */}
+                        <div className="mt-auto pb-6 relative z-10 w-full border-t border-white/10 pt-8">
+                            <h3
+                                className="text-xs font-mono uppercase tracking-widest mb-6 text-white/40"
+                            >
+                                Follow Us
+                            </h3>
+                            <ul className="flex gap-6">
+                                {socialLinks.map((social, index) => (
+                                    <li
+                                        key={index}
+                                        className="nav-social-item translate-y-5"
+                                    >
+                                        <a
+                                            href={social.href}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-sm font-medium text-white/80 hover:text-white transition-colors duration-300 uppercase tracking-wider"
+                                        >
+                                            {social.label}
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
                     </div>
                 </div>
-
-                {/* Right Section: Actions */}
-                <div className="hidden md:flex items-center gap-3">
-                    {user ? (
-                        <Link href="/dashboard" className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-white hover:text-gray-300 transition-colors">
-                            <User size={16} />
-                            Dashboard
-                        </Link>
-                    ) : (
-                        <Link href="/login" className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-white hover:text-gray-300 transition-colors">
-                            <User size={16} />
-                            Logg inn
-                        </Link>
-                    )}
-                    <Link
-                        href="/kontakt"
-                        className="flex items-center gap-2 bg-white text-black px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-100 transition-colors"
-                    >
-                        <Phone size={16} />
-                        Kontakt meg
-                    </Link>
-                </div>
-
-                {/* Mobile Toggle */}
-                <button
-                    className="md:hidden text-white p-1"
-                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                >
-                    {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-                </button>
             </div>
-
-            <AnimatePresence>
-                {mounted && isMobileMenuOpen && (
-                    <MobileMenuOverlay
-                        navLinks={navLinks}
-                        activeDropdown={activeDropdown}
-                        setActiveDropdown={setActiveDropdown}
-                        setIsMobileMenuOpen={setIsMobileMenuOpen}
-                        user={user}
-                    />
-                )}
-            </AnimatePresence>
-
-            {/* Admin Modal */}
-            <AdminModal
-                isOpen={isServiceModalOpen}
-                onClose={() => setIsServiceModalOpen(false)}
-                title="Administrer Tjenester"
-            >
-                <ServiceForm onSuccess={handleServiceSuccess} />
-            </AdminModal>
-        </nav>
+        </>
     );
-}
+};
 
-// Separate component for the overlay to keep logic clean and enable easier portalling if we moved strictly to a component structure,
-// but for now we'll inline the portal usage or just define a helper.
-// Actually, let's keep it simple and just Portal the content directly inside the main component return if possible,
-// but createPortal needs a DOM node.
-// To handle SSR, we check for window/document inside the render or effect?
-// Actually, standard practice is to put the createPortal check in the render.
+// #endregion
 
-import { createPortal } from "react-dom";
+// #region
 
-function MobileMenuOverlay({ navLinks, activeDropdown, setActiveDropdown, setIsMobileMenuOpen, user }: any) {
-    if (typeof document === "undefined") return null;
+export default Navbar;
 
-    return createPortal(
-        <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[100] bg-black text-white flex flex-col" // Dark theme
-        >
-            {/* Mobile Header */}
-            <div className="h-16 flex items-center justify-between px-6 border-b border-white/10">
-                <Link href="/" className="text-xl font-bold tracking-tight text-white flex items-center gap-3" onClick={() => setIsMobileMenuOpen(false)}>
-                    <img
-                        src="/assets/images/Logo.png"
-                        alt="Logo"
-                        width={32}
-                        height={32}
-                        className="h-8 w-8 object-contain"
-                    />
-                    <span>Utvikleren.site</span>
-                </Link>
-                <button
-                    className="p-2 -mr-2 text-white hover:bg-white/10 rounded-full transition-colors"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                >
-                    <X size={24} />
-                </button>
-            </div>
-
-            {/* Mobile Content */}
-            <div className="flex-1 overflow-y-auto px-6 py-6 flex flex-col gap-6">
-                <div className="flex flex-col gap-2">
-                    {navLinks.map((link: any) => (
-                        <div key={link.name} className="border-b border-white/5 last:border-0 pb-2 last:pb-0">
-                            <div
-                                className="flex items-center justify-between py-3 text-lg font-medium text-white"
-                                onClick={() => {
-                                    if (link.hasDropdown) {
-                                        setActiveDropdown(activeDropdown === link.name ? null : link.name);
-                                    } else {
-                                        setIsMobileMenuOpen(false);
-                                    }
-                                }}
-                            >
-                                <Link
-                                    href={link.href}
-                                    className="flex items-center gap-3"
-                                    onClick={(e) => {
-                                        if (link.hasDropdown) {
-                                            e.preventDefault();
-                                        } else {
-                                            setIsMobileMenuOpen(false);
-                                        }
-                                    }}
-                                >
-                                    <link.icon size={20} className="text-gray-400" />
-                                    {link.name}
-                                </Link>
-                                {link.hasDropdown && (
-                                    <ChevronDown
-                                        size={16}
-                                        className={`text-gray-500 transition-transform duration-200 ${activeDropdown === link.name ? "rotate-180" : ""}`}
-                                    />
-                                )}
-                            </div>
-
-                            {/* Mobile Submenu accordion */}
-                            <AnimatePresence>
-                                {link.hasDropdown && activeDropdown === link.name && (
-                                    <motion.div
-                                        initial={{ height: 0, opacity: 0 }}
-                                        animate={{ height: "auto", opacity: 1 }}
-                                        exit={{ height: 0, opacity: 0 }}
-                                        className="overflow-hidden"
-                                    >
-                                        <div className="pl-4 pb-4 pt-1 flex flex-col gap-2">
-                                            {link.megaMenu ? (
-                                                <>
-                                                    <div className="mb-4 p-4 bg-white/5 border border-white/10 rounded-xl">
-                                                        <p className="font-medium text-white mb-1">{link.megaMenu.headline}</p>
-                                                        <p className="text-sm text-gray-400 mb-3">{link.megaMenu.subtext}</p>
-                                                        <Link
-                                                            href="/ai-fordeler"
-                                                            onClick={() => setIsMobileMenuOpen(false)}
-                                                            className="inline-block text-xs font-semibold bg-white text-black px-3 py-1.5 rounded-lg"
-                                                        >
-                                                            {link.megaMenu.action}
-                                                        </Link>
-                                                    </div>
-                                                    {link.megaMenu.items.map((item: any) => (
-                                                        <Link
-                                                            key={item.name}
-                                                            href={item.href}
-                                                            className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 text-gray-400 hover:text-white transition-colors"
-                                                            onClick={() => setIsMobileMenuOpen(false)}
-                                                        >
-                                                            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-                                                                <item.icon size={14} className="text-gray-300" />
-                                                            </div>
-                                                            <span className="text-sm font-medium">{item.name}</span>
-                                                        </Link>
-                                                    ))}
-                                                </>
-                                            ) : (
-                                                link.dropdownItems?.map((item: any) => (
-                                                    <Link
-                                                        key={item.name}
-                                                        href={item.href}
-                                                        className="block px-3 py-2 text-base text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
-                                                        onClick={() => setIsMobileMenuOpen(false)}
-                                                    >
-                                                        {item.name}
-                                                    </Link>
-                                                ))
-                                            )}
-                                        </div>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </div>
-                    ))}
-                </div>
-
-                {/* Mobile Actions */}
-                <div className="mt-auto pt-6 flex flex-col gap-3">
-                    {user ? (
-                        <Link
-                            href="/dashboard"
-                            className="w-full h-12 flex items-center justify-center gap-2 rounded-full border border-white/10 text-white font-medium text-base hover:bg-white/5 transition-colors"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                            <User size={18} />
-                            Dashboard
-                        </Link>
-                    ) : (
-                        <Link
-                            href="/login"
-                            className="w-full h-12 flex items-center justify-center gap-2 rounded-full border border-white/10 text-white font-medium text-base hover:bg-white/5 transition-colors"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                            <User size={18} />
-                            Logg inn
-                        </Link>
-                    )}
-                    <Link
-                        href="/kontakt"
-                        className="w-full h-12 flex items-center justify-center gap-2 bg-white text-black rounded-full font-medium text-base hover:bg-gray-100 transition-colors"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                        Kontakt meg
-                    </Link>
-                </div>
-            </div>
-        </motion.div>,
-        document.body
-    );
-}
+// #endregion
