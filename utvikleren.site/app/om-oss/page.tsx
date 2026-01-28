@@ -41,7 +41,7 @@ export default function AboutPage() {
                 </div>
 
                 {/* Background ambient light */}
-                <div className="absolute top-0 right-0 w-[50vw] h-[50vw] bg-blue-600/10 blur-[150px] rounded-full pointer-events-none -z-10" />
+                <div className="hidden md:block absolute top-0 right-0 w-[50vw] h-[50vw] bg-blue-600/10 blur-[150px] rounded-full pointer-events-none -z-10" />
             </section>
 
             {/* 2. THE VISION - Asymmetric / 3D Layout */}
@@ -116,7 +116,7 @@ export default function AboutPage() {
                             <div className="relative overflow-hidden rounded-2xl bg-[#0a0a0a] border border-white/10 p-12 md:p-16 flex flex-col md:flex-row items-center gap-12 group">
 
                                 {/* Background Gradient Effect */}
-                                <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 blur-[100px] rounded-full pointer-events-none group-hover:bg-blue-600/20 transition-colors duration-500" />
+                                <div className="hidden md:block absolute top-0 right-0 w-64 h-64 bg-blue-600/10 blur-[100px] rounded-full pointer-events-none group-hover:bg-blue-600/20 transition-colors duration-500" />
 
                                 {/* Avatar */}
                                 <div className="relative shrink-0">

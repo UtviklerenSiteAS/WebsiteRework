@@ -140,20 +140,6 @@ export default function ProjectEditor({ project, onClose, onSaved }: EditorProps
                             <label className="text-xs font-mono text-white/50 uppercase">Category</label>
                             <input name="category" value={formData.category} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white" />
                         </div>
-                        <div className="space-y-1 md:col-span-2">
-                            <label className="text-xs font-mono text-white/50 uppercase">Status (Progress)</label>
-                            <select
-                                name="status"
-                                value={formData.status}
-                                // @ts-ignore
-                                onChange={handleChange}
-                                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white appearance-none cursor-pointer"
-                            >
-                                <option value="Planning">Planning</option>
-                                <option value="Working">Working</option>
-                                <option value="Finished">Finished</option>
-                            </select>
-                        </div>
                     </div>
 
                     {/* URLs */}

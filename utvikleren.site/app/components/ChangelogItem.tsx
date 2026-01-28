@@ -82,14 +82,7 @@ export default function ChangelogItem({ project, index }: ChangelogItemProps) {
                     </div>
 
                     {/* Status Badge */}
-                    <div className={`
-                        px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border
-                        ${project.status === 'Planlegging' ? 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20' : ''}
-                        ${project.status === 'Under arbeid' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : ''}
-                        ${project.status === 'Ferdig' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : ''}
-                    `}>
-                        {project.status}
-                    </div>
+
                 </div>
 
                 {/* Description */}

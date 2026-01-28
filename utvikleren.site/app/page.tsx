@@ -6,10 +6,10 @@ import { GooeyText } from "@/components/ui/gooey-text-morphing";
 
 export default function Home() {
   return (
-    <main className="relative bg-[#030303] text-white selection:bg-purple-500/30">
+    <main className="relative bg-[#030303] text-white selection:bg-purple-500/30 h-[100dvh] w-full overflow-hidden">
 
       {/* Hero Section - Full Screen Only */}
-      <section className="relative h-screen max-h-screen flex flex-col items-center justify-center overflow-hidden">
+      <section className="relative h-full w-full flex flex-col items-center justify-center overflow-hidden">
         {/* Beams Background */}
         <div className="absolute inset-0 z-0">
           <Beams
