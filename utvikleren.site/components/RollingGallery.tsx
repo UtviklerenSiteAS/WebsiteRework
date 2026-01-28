@@ -40,7 +40,7 @@ const RollingGallery: React.FC<RollingGalleryProps> = ({
     const faceWidth = cylinderWidth / faceCount;
     const rotation = useMotionValue(0);
     const controls = useAnimation();
-    const autoplayRef = useRef<NodeJS.Timeout>();
+    const autoplayRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         const checkMobile = () => {
