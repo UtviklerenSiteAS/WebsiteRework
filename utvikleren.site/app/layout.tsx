@@ -10,6 +10,11 @@ export const metadata: Metadata = {
   description: "Professional development services",
 };
 
+export const viewport = {
+  themeColor: '#000000',
+  colorScheme: 'dark',
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
