@@ -56,8 +56,8 @@ export default function RootLayout({
   // ... existing code ...
 
   return (
-    <html lang="no">
-      <body>
+    <html lang="no" className="bg-[#030303]">
+      <body className="bg-[#030303]">
         <BubbleMenu
           logo="/Logo.png"
           items={menuItems}
