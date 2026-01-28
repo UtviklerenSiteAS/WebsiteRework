@@ -3,7 +3,6 @@
 import React from "react";
 import Beams from "./components/Beams";
 import { GooeyText } from "@/components/ui/gooey-text-morphing";
-import Typewriter from "@/components/reactbits/Typewriter";
 
 export default function Home() {
   return (
@@ -32,23 +31,13 @@ export default function Home() {
               <h1 className="text-6xl lg:text-8xl font-bold tracking-tighter leading-tight max-w-3xl mx-auto drop-shadow-2xl">
                 <div className="flex flex-col items-center">
                   <div className="relative h-[1.1em] flex items-center justify-center">
-                    {/* Desktop Animation: Gooey (Hidden on mobile) */}
+                    <span className="block md:hidden text-white">Fremtidssikret</span>
                     <div className="hidden md:block">
                       <GooeyText
                         texts={["Intelligent", "Automatisert", "Innovativ", "Fremtidssikret"]}
                         morphTime={1}
                         cooldownTime={0.25}
                         textClassName="text-white"
-                      />
-                    </div>
-
-                    {/* Mobile Animation: Typewriter (Visible only on mobile) */}
-                    <div className="block md:hidden">
-                      <Typewriter
-                        text={["Intelligent", "Automatisert", "Innovativ", "Fremtidssikret"]}
-                        speed={70}
-                        waitTime={1500}
-                        className="text-white"
                       />
                     </div>
                   </div>

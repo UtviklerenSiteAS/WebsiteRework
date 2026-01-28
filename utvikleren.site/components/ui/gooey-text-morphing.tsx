@@ -20,19 +20,6 @@ export function GooeyText({
 }: GooeyTextProps) {
   const text1Ref = React.useRef<HTMLSpanElement>(null);
   const text2Ref = React.useRef<HTMLSpanElement>(null);
-  const isDesktop = React.useRef(true);
-
-  React.useEffect(() => {
-    // Check initial screen size
-    if (typeof window !== 'undefined') {
-      const checkSize = () => {
-        isDesktop.current = window.matchMedia('(min-width: 768px)').matches;
-      };
-      checkSize();
-      window.addEventListener('resize', checkSize);
-      return () => window.removeEventListener('resize', checkSize);
-    }
-  }, []);
 
   React.useEffect(() => {
     let textIndex = texts.length - 1;
@@ -42,15 +29,11 @@ export function GooeyText({
 
     const setMorph = (fraction: number) => {
       if (text1Ref.current && text2Ref.current) {
-        // Only apply blur on desktop
-        if (isDesktop.current) {
-          text2Ref.current.style.filter = `blur(${Math.min(8 / fraction - 8, 100)}px)`;
-          text1Ref.current.style.filter = `blur(${Math.min(8 / fraction - 8, 100)}px)`;
-        }
-
-        // Always apply opacity
+        text2Ref.current.style.filter = `blur(${Math.min(8 / fraction - 8, 100)}px)`;
         text2Ref.current.style.opacity = `${Math.pow(fraction, 0.4) * 100}%`;
+
         fraction = 1 - fraction;
+        text1Ref.current.style.filter = `blur(${Math.min(8 / fraction - 8, 100)}px)`;
         text1Ref.current.style.opacity = `${Math.pow(fraction, 0.4) * 100}%`;
       }
     };
@@ -125,19 +108,9 @@ export function GooeyText({
         </defs>
       </svg>
 
-      <style jsx>{`
-        .gooey-filter {
-          filter: none;
-        }
-        @media (min-width: 768px) {
-          .gooey-filter {
-            filter: url(#threshold);
-          }
-        }
-      `}</style>
-
       <div
-        className="flex items-center justify-center gooey-filter"
+        className="flex items-center justify-center"
+        style={{ filter: "url(#threshold)" }}
       >
         <span
           ref={text1Ref}
