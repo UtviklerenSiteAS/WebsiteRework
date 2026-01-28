@@ -108,9 +108,19 @@ export function GooeyText({
         </defs>
       </svg>
 
+      <style jsx>{`
+        .gooey-filter {
+          filter: none;
+        }
+        @media (min-width: 768px) {
+          .gooey-filter {
+            filter: url(#threshold);
+          }
+        }
+      `}</style>
+
       <div
-        className="flex items-center justify-center"
-        style={{ filter: "url(#threshold)" }}
+        className="flex items-center justify-center gooey-filter"
       >
         <span
           ref={text1Ref}
