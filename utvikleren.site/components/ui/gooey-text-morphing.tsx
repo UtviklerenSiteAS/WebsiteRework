@@ -20,21 +20,25 @@ export function GooeyText({
 }: GooeyTextProps) {
   const text1Ref = React.useRef<HTMLSpanElement>(null);
   const text2Ref = React.useRef<HTMLSpanElement>(null);
+  const isDesktop = React.useRef(true);
+
+  React.useEffect(() => {
+    // Check initial screen size
+    if (typeof window !== 'undefined') {
+      const checkSize = () => {
+        isDesktop.current = window.matchMedia('(min-width: 768px)').matches;
+      };
+      checkSize();
+      window.addEventListener('resize', checkSize);
+      return () => window.removeEventListener('resize', checkSize);
+    }
+  }, []);
 
   React.useEffect(() => {
     let textIndex = texts.length - 1;
     let time = new Date();
     let morph = 0;
     let cooldown = cooldownTime;
-
-    const isDesktop = React.useRef(true);
-
-    React.useEffect(() => {
-      // Check initial screen size
-      if (typeof window !== 'undefined') {
-        isDesktop.current = window.matchMedia('(min-width: 768px)').matches;
-      }
-    }, []);
 
     const setMorph = (fraction: number) => {
       if (text1Ref.current && text2Ref.current) {
