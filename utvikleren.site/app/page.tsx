@@ -41,7 +41,7 @@ export default function Home() {
                       />
                     </div>
                   </div>
-                  <span className="text-white">Med AI.</span>
+                  <span className="text-white mt-6">Med AI.</span>
                 </div>
               </h1>
             </div>
