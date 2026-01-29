@@ -32,8 +32,8 @@ export default function ReferanserPage() {
             <div className="relative z-10">
 
                 {/* Header Section */}
-                <section className="relative pt-40 pb-12">
-                    <div className="container mx-auto px-6 max-w-4xl"> {/* Standardized width */}
+                <section className="relative pt-40 pb-12 w-full px-8">
+                    <div className="w-full"> {/* Full width */}
 
                         <div className="flex flex-col items-start gap-8">
                             <div className="space-y-4">
@@ -61,8 +61,8 @@ export default function ReferanserPage() {
                 </section>
 
                 {/* Changelog List Section */}
-                <section className="relative pb-32">
-                    <div className="container mx-auto px-6 max-w-4xl"> {/* Standardized width */}
+                <section className="relative pb-32 w-full px-8">
+                    <div className="w-full"> {/* Full width */}
                         {isLoading ? (
                             <div className="text-white/40 italic">Laster prosjekter...</div>
                         ) : projects.length === 0 ? (
