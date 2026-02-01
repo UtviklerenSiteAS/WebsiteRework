@@ -1,15 +1,44 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import Beams from "./components/Beams";
 import { GooeyText } from "@/components/ui/gooey-text-morphing";
+import TestimonialSlider from "@/components/ui/testimonial-slider";
+
+const testimonials = [
+  {
+    img: "https://randomuser.me/api/portraits/men/91.jpg",
+    quote: "Inspira UI is sleeker than my star cruiser. Launch-ready in seconds. Zero crashes, zero gravity.",
+    name: "Buzz Lightyear",
+    role: "Intergalactic Interface Command",
+  },
+  {
+    img: "https://randomuser.me/api/portraits/women/12.jpg",
+    quote: "Clickin' around this thing feels like ridin' a horse with turbo boosters. Inspira’s got giddyup!",
+    name: "Jessie",
+    role: "Yeehaw Engagement & Barnyard UX",
+  },
+  {
+    img: "https://randomuser.me/api/portraits/men/45.jpg",
+    quote: "I’ve seen some clunky UIs in my day... but this one? Smoother than a tumbleweed on Tuesday.",
+    name: "Woody",
+    role: "Sheriff",
+  },
+  {
+    img: "https://randomuser.me/api/portraits/men/33.jpg",
+    quote: "I was terrified. Then I clicked. Nothing exploded. Inspira UI is a safe space. I’m thriving.",
+    name: "Rex",
+    role: "Senior Panic Tester, Dinosaur Usability Lab",
+  },
+];
 
 export default function Home() {
   return (
-    <main className="relative bg-[#030303] text-white selection:bg-purple-500/30 h-[100dvh] w-full overflow-hidden">
-
-      {/* Hero Section - Full Screen Only */}
-      <section className="relative h-full w-full flex flex-col items-center justify-center overflow-hidden">
+    <main className="relative bg-[#030303] text-white selection:bg-purple-500/30 w-full min-h-screen">
+      {/* Hero Section */}
+      {/* Hero Section */}
+      <section className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden">
         {/* Beams Background */}
         <div className="absolute inset-0 z-0">
           <Beams
@@ -52,17 +81,24 @@ export default function Home() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto mt-6">
-              <button className="px-6 py-2.5 rounded-full bg-white text-black text-sm font-medium hover:bg-white/90 transition-all duration-300 group flex items-center justify-center gap-2">
+              <Link href="/kontakt" className="px-6 py-2.5 rounded-full bg-white text-black text-sm font-medium hover:bg-white/90 transition-all duration-300 group flex items-center justify-center gap-2">
                 Transformer nå
                 <svg className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
-              </button>
-              <button className="px-6 py-2.5 rounded-full border border-white/20 text-white text-sm font-medium hover:bg-white/10 transition-all duration-300">
+              </Link>
+              <Link href="/tjenester" className="px-6 py-2.5 rounded-full border border-white/20 text-white text-sm font-medium hover:bg-white/10 transition-all duration-300">
                 Utforsk AI-løsninger
-              </button>
+              </Link>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Reviews Section */}
+      <section id="reviews" className="relative min-h-screen w-full pb-12 pt-0 bg-[#030303] flex items-center justify-center">
+        <div className="container mx-auto px-6">
+          <TestimonialSlider testimonials={testimonials} />
         </div>
       </section>
 

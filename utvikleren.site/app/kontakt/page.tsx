@@ -1,156 +1,55 @@
 "use client";
 
-import React, { useState } from "react";
-import { motion } from "framer-motion";
+import React from "react";
+import { BackgroundBeams } from "@/components/ui/background-beams";
+import ContactForm from "../components/ContactForm";
 import BlurText from "../components/reactbits/BlurText";
-import { toast } from "sonner";
 
 export default function ContactPage() {
-    const [formData, setFormData] = useState({
-        name: "",
-        email: "",
-        company: "",
-        message: ""
-    });
-    const [isSubmitting, setIsSubmitting] = useState(false);
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsSubmitting(true);
-
-        try {
-            const response = await fetch('/api/contact', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
-            });
-
-            if (response.ok) {
-                toast.success("Melding sendt! Vi hører fra oss snart.");
-                setFormData({ name: "", email: "", company: "", message: "" });
-            } else {
-                toast.error("Noe gikk galt. Prøv igjen senere.");
-            }
-        } catch (error) {
-            toast.error("Kunne ikke sende melding.");
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
     return (
-        <main className="min-h-screen bg-[#050505] text-white selection:bg-white selection:text-black font-sans overflow-x-hidden">
+        <main className="min-h-screen w-full bg-neutral-950 relative flex flex-col items-center justify-center antialiased selection:bg-purple-500/30">
 
-            <section className="min-h-screen flex flex-col justify-center px-6 md:px-20 relative pt-32">
-                <div className="flex flex-col lg:flex-row gap-20 max-w-7xl mx-auto w-full">
+            {/* Split Layout Container */}
+            <div className="relative z-10 w-full max-w-7xl mx-auto p-4 md:p-12 lg:p-20 flex flex-col md:flex-row items-start md:items-center justify-between gap-12 md:gap-20 pt-32 md:pt-0">
 
-                    {/* LEFT SIDE - Copy */}
-                    <div className="w-full lg:w-1/2 space-y-12">
-                        <h1 className="text-6xl md:text-8xl font-bold tracking-tighter leading-[0.9]">
-                            <BlurText
-                                text="Start"
-                                className="block text-white"
-                                delay={0.2}
-                            />
-                            <BlurText
-                                text="reisen."
-                                className="block text-white/50"
-                                delay={0.6}
-                            />
-                        </h1>
+                {/* LEFT SIDE: Copy & Vision */}
+                <div className="w-full md:w-1/2 space-y-8">
+                    <h1 className="text-5xl md:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-neutral-200 to-neutral-600 tracking-tight leading-[1.1]">
+                        <BlurText
+                            text="Start reisen."
+                            className="text-white drop-shadow-2xl"
+                            delay={0.2}
+                        />
+                    </h1>
 
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 1, duration: 0.8 }}
-                            className="space-y-8 max-w-md"
+                    <p className="text-neutral-400 text-lg md:text-xl font-light leading-relaxed max-w-lg">
+                        Vi skaper morgendagens løsninger i dag. Fortell oss om dine ambisjoner, så bygger vi fremtiden sammen.
+                    </p>
+
+                    <div className="pt-8 flex flex-col gap-4">
+                        <div className="flex items-center gap-4 text-neutral-500 text-sm font-mono uppercase tracking-wider">
+                            <span>Kontakt Oss Direkte</span>
+                            <div className="h-px bg-neutral-800 flex-1" />
+                        </div>
+                        <a
+                            href="mailto:post@utvikleren.site"
+                            className="text-2xl text-white hover:text-purple-400 transition-colors font-medium"
                         >
-                            <p className="text-xl text-white/60 leading-relaxed font-light">
-                                Vi tar kun inn et begrenset antall prosjekter per kvartal for å sikre maksimal kvalitet.
-                                Fortell oss om din visjon, så ser vi om vi er en match.
-                            </p>
-
-                            <div className="space-y-4 pt-8 border-t border-white/10">
-                                <div>
-                                    <h4 className="text-white font-bold mb-1">E-post</h4>
-                                    <a href="mailto:post@utvikleren.site" className="text-blue-500 hover:text-white transition-colors">post@utvikleren.site</a>
-                                </div>
-                            </div>
-                        </motion.div>
+                            post@utvikleren.site
+                        </a>
                     </div>
-
-                    {/* RIGHT SIDE - Form */}
-                    <motion.div
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 1.2, duration: 0.8 }}
-                        className="w-full lg:w-1/2"
-                    >
-                        <form onSubmit={handleSubmit} className="space-y-8 bg-white/5 p-8 md:p-12 rounded-2xl border border-white/10 relative overflow-hidden group">
-                            {/* Ambient Background Glow */}
-                            <div className="absolute top-0 right-0 w-full h-full bg-blue-600/5 blur-[100px] pointer-events-none" />
-
-                            <div className="relative z-10 space-y-6">
-                                <div className="space-y-2">
-                                    <label className="text-sm font-mono uppercase text-white/50 tracking-wider">Navn</label>
-                                    <input
-                                        type="text"
-                                        required
-                                        value={formData.name}
-                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                        className="w-full bg-transparent border-b border-white/20 py-4 text-xl focus:outline-none focus:border-blue-500 transition-colors placeholder:text-white/20"
-                                        placeholder="Ola Nordmann"
-                                    />
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-sm font-mono uppercase text-white/50 tracking-wider">E-post</label>
-                                    <input
-                                        type="email"
-                                        required
-                                        value={formData.email}
-                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                        className="w-full bg-transparent border-b border-white/20 py-4 text-xl focus:outline-none focus:border-blue-500 transition-colors placeholder:text-white/20"
-                                        placeholder="ola@bedrift.no"
-                                    />
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-sm font-mono uppercase text-white/50 tracking-wider">Bedrift (Valgfritt)</label>
-                                    <input
-                                        type="text"
-                                        value={formData.company}
-                                        onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                                        className="w-full bg-transparent border-b border-white/20 py-4 text-xl focus:outline-none focus:border-blue-500 transition-colors placeholder:text-white/20"
-                                        placeholder="Din Bedrift AS"
-                                    />
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-sm font-mono uppercase text-white/50 tracking-wider">Melding</label>
-                                    <textarea
-                                        required
-                                        value={formData.message}
-                                        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                                        rows={4}
-                                        className="w-full bg-transparent border-b border-white/20 py-4 text-xl focus:outline-none focus:border-blue-500 transition-colors placeholder:text-white/20 resize-none"
-                                        placeholder="Fortell oss om prosjektet..."
-                                    />
-                                </div>
-                            </div>
-
-                            <button
-                                type="submit"
-                                disabled={isSubmitting}
-                                className="w-full bg-white text-black font-bold py-5 rounded-lg hover:bg-blue-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-lg mt-4 relative z-10"
-                            >
-                                {isSubmitting ? "Sender..." : "Send Forespørsel"}
-                            </button>
-                        </form>
-                    </motion.div>
-
                 </div>
-            </section>
+
+                {/* RIGHT SIDE: The Form */}
+                <div className="w-full md:w-1/2 relative">
+                    {/* Decorative gradient behind form */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-purple-500/10 blur-[100px] rounded-full pointer-events-none" />
+                    <ContactForm />
+                </div>
+            </div>
+
+            {/* Background Beams */}
+            <BackgroundBeams />
         </main>
     );
 }
