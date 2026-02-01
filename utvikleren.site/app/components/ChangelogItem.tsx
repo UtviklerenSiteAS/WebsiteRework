@@ -19,9 +19,10 @@ export interface ChangelogProject {
 
 interface ChangelogItemProps {
     project: ChangelogProject;
+    index?: number;
 }
 
-export default function ChangelogItem({ project }: ChangelogItemProps) {
+export default function ChangelogItem({ project, index }: ChangelogItemProps) {
 
     return (
         <div className="relative flex flex-col md:flex-row gap-8 md:gap-12 py-8 group">
