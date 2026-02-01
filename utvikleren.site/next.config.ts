@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 import path from "path";
 
 const nextConfig: NextConfig = {
+    outputFileTracingRoot: path.join(__dirname),
     turbopack: {
         // Fixes Turbopack selecting the wrong workspace root when multiple lockfiles exist.
         root: path.join(__dirname),
