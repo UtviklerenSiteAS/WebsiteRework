@@ -1,22 +1,7 @@
 import type { NextConfig } from "next";
-import path from "path";
 
 const nextConfig: NextConfig = {
-    outputFileTracingRoot: path.join(__dirname),
-    turbopack: {
-        // Fixes Turbopack selecting the wrong workspace root when multiple lockfiles exist.
-        root: path.join(__dirname),
-    },
-    images: {
-        remotePatterns: [
-            {
-                protocol: 'https',
-                hostname: '**.supabase.co',
-                port: '',
-                pathname: '/storage/v1/object/public/**',
-            },
-        ],
-    },
+    /* config options here */
 };
 
 export default nextConfig;
