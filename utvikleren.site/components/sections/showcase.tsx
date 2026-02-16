@@ -39,6 +39,8 @@ import ReceptionistDemo from "@/components/showcase/receptionist-demo";
 import ChatbotDemo from "@/components/showcase/chatbot-demo";
 import EmailDemo from "@/components/showcase/email-demo";
 
+import { AnimatedTabs } from "@/components/ui/animated-tabs";
+
 /* ═══════════════════════════════════════════════
    DEMO 3: Live Notification Feed (AnimatedList)
    ═══════════════════════════════════════════════ */
@@ -83,7 +85,7 @@ function Notification({ name, description, icon, color, time }: NotificationItem
 function NotificationDemo() {
     return (
         <Safari url="dashboard.dinbedrift.no">
-            <div className="relative flex h-[420px] w-full flex-col overflow-hidden p-4">
+            <div className="relative flex h-[530px] w-full flex-col overflow-hidden p-4">
                 <div className="flex items-center justify-between mb-4 px-1">
                     <div>
                         <p className="text-sm font-medium text-foreground">Aktivitetsfeed</p>
@@ -118,7 +120,7 @@ function DashboardDemo() {
 
     return (
         <Safari url="dashboard.dinbedrift.no">
-            <div className="flex flex-col h-[420px]">
+            <div className="flex flex-col h-[530px]">
                 <div className="flex items-center justify-between px-5 py-3 border-b border-border">
                     <div>
                         <p className="text-sm font-medium text-foreground">Kontrollpanel</p>
@@ -262,7 +264,7 @@ function WebsiteDemo() {
 
     return (
         <Safari url="builder.utvikleren.site">
-            <div className="relative flex flex-col h-[420px] bg-zinc-950 select-none overflow-hidden">
+            <div className="relative flex flex-col h-[530px] bg-zinc-950 select-none overflow-hidden">
                 {/* ── Animated Cursor ── */}
                 <div
                     className="absolute z-50 pointer-events-none transition-all duration-700 ease-in-out"
@@ -499,29 +501,38 @@ export default function Showcase() {
 
                 {/* Tab Switcher */}
                 <div className="flex justify-center mb-12">
-                    <div className="inline-flex flex-wrap items-center justify-center gap-1 rounded-2xl bg-muted/30 dark:bg-muted/20 border border-border p-1.5">
-                        {showcaseItems.map((item) => (
-                            <button
-                                key={item.id}
-                                onClick={() => setActiveTab(item.id)}
-                                className={cn(
-                                    "px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all duration-300",
-                                    activeTab === item.id
-                                        ? "bg-background shadow-lg text-foreground dark:bg-white/10 dark:text-white"
-                                        : "text-muted-foreground hover:text-foreground"
-                                )}
-                            >
-                                {item.label}
-                            </button>
-                        ))}
+                    <div className="w-full max-w-full overflow-x-auto pb-4 sm:pb-0 scrollbar-hide -mx-6 px-6 sm:mx-0 sm:px-0 text-center">
+                        <div className="inline-flex mx-auto p-1.5 rounded-full bg-muted/30 dark:bg-muted/20 border border-border">
+                            {showcaseItems.map((item) => (
+                                <button
+                                    key={item.id}
+                                    onClick={() => setActiveTab(item.id)}
+                                    className={cn(
+                                        "relative px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 whitespace-nowrap z-10",
+                                        activeTab === item.id
+                                            ? "text-foreground"
+                                            : "text-muted-foreground hover:text-foreground"
+                                    )}
+                                >
+                                    {activeTab === item.id && (
+                                        <div
+                                            className="absolute inset-0 bg-background shadow-md rounded-full border border-border/50 -z-10 animate-in fade-in"
+                                        />
+                                    )}
+                                    {item.label}
+                                </button>
+                            ))}
+                        </div>
                     </div>
                 </div>
 
                 {/* Content */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
                     {/* Demo */}
-                    <div className="relative">
-                        <BorderBeam size={300} duration={10} colorFrom="#3b82f6" colorTo="#06b6d4" />
+                    <div className="relative flex items-center justify-center min-h-[530px]">
+                        {activeTab !== "receptionist" && (
+                            <BorderBeam size={300} duration={10} colorFrom="#3b82f6" colorTo="#06b6d4" />
+                        )}
                         <ActiveComponent />
                     </div>
 

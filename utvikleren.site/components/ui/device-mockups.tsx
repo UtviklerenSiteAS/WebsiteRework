@@ -8,9 +8,9 @@ interface SafariProps {
 
 export function Safari({ url = "dinbedrift.no", className, children }: SafariProps) {
     return (
-        <div className={cn("overflow-hidden rounded-xl border border-border bg-background shadow-2xl", className)}>
+        <div className={cn("overflow-hidden rounded-xl border border-border bg-background shadow-2xl flex flex-col", className)}>
             {/* Safari Chrome */}
-            <div className="flex items-center gap-2 border-b border-border bg-muted/40 px-4 py-3">
+            <div className="flex items-center gap-2 border-b border-border bg-muted/40 px-2 sm:px-4 py-3">
                 {/* Traffic Lights */}
                 <div className="flex gap-1.5">
                     <div className="h-3 w-3 rounded-full bg-[#ff5f57]" />
@@ -19,11 +19,11 @@ export function Safari({ url = "dinbedrift.no", className, children }: SafariPro
                 </div>
 
                 {/* URL Bar */}
-                <div className="flex-1 flex justify-center">
-                    <div className="flex items-center gap-2 rounded-lg bg-background border border-border px-4 py-1.5 min-w-[200px] max-w-[400px] w-full justify-center shadow-sm">
+                <div className="flex-1 flex justify-center min-w-0">
+                    <div className="flex items-center gap-2 rounded-lg bg-background border border-border px-2 sm:px-4 py-1.5 min-w-[120px] sm:min-w-[200px] max-w-[400px] w-full justify-center shadow-sm truncate">
                         {/* Lock icon */}
                         <svg
-                            className="h-3 w-3 text-muted-foreground"
+                            className="h-3 w-3 text-muted-foreground shrink-0"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -35,16 +35,16 @@ export function Safari({ url = "dinbedrift.no", className, children }: SafariPro
                                 d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
                             />
                         </svg>
-                        <span className="text-xs text-muted-foreground">{url}</span>
+                        <span className="text-xs text-muted-foreground truncate">{url}</span>
                     </div>
                 </div>
 
                 {/* Spacer for symmetry */}
-                <div className="w-[52px]" />
+                <div className="w-[40px] sm:w-[52px]" />
             </div>
 
             {/* Content Area */}
-            <div className="relative bg-background">
+            <div className="relative bg-background flex-1 h-full overflow-hidden">
                 {children}
             </div>
         </div>
@@ -60,14 +60,14 @@ export function IPhone({ className, children }: IPhoneProps) {
     return (
         <div className={cn("relative mx-auto w-[280px]", className)}>
             {/* Phone Frame */}
-            <div className="overflow-hidden rounded-[2.5rem] border-[3px] border-zinc-700 bg-zinc-900 shadow-2xl">
+            <div className="overflow-hidden rounded-[2.5rem] border-[3px] border-zinc-700 bg-zinc-900 shadow-2xl h-full flex flex-col">
                 {/* Notch */}
                 <div className="relative flex justify-center py-2 bg-zinc-900">
                     <div className="h-[22px] w-[100px] rounded-full bg-zinc-800" />
                 </div>
 
                 {/* Screen */}
-                <div className="relative overflow-hidden bg-zinc-950">
+                <div className="relative overflow-hidden bg-zinc-950 flex-1 h-full w-full">
                     {children}
                 </div>
 
