@@ -1,5 +1,5 @@
 import Navbar from "@/components/navbar";
-import { RetroGrid } from "@/components/ui/retro-grid";
+import RetroGrid from "@/components/ui/retro-grid";
 import { Mail, MessageSquare, ShieldCheck, Zap } from "lucide-react";
 
 export default function CalvioSupportPage() {

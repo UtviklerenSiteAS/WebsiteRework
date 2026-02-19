@@ -1,5 +1,5 @@
 import Navbar from "@/components/navbar";
-import { RetroGrid } from "@/components/ui/retro-grid";
+import RetroGrid from "@/components/ui/retro-grid";
 
 export default function CalvioTermsPage() {
     return (
