@@ -10,7 +10,6 @@ import { Logo } from "@/components/ui/logo";
 const navLinks = [
     { label: "Hjem", href: "/" },
     { label: "Prosjekter", href: "/prosjekter" },
-    { label: "Nettside Bygger", href: "/nettside-bygger" },
     { label: "Hva vi lager", href: "/#showcase" },
     { label: "Prosess", href: "/#prosess" },
 ];
