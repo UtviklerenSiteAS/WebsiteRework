@@ -61,10 +61,11 @@ export default function Footer({ hideCTA = false }: FooterProps) {
                             Sider
                         </h4>
                         <div className="flex flex-col gap-3">
-                            <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Hjem</a>
-                            <a href="#showcase" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Hva vi lager</a>
-                            <a href="#prosess" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Prosess</a>
-                            <a href="#kontakt" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Kontakt</a>
+                            <a href="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Hjem</a>
+                            <a href="/prosjekter" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Prosjekter</a>
+                            <a href="/#showcase" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Hva vi lager</a>
+                            <a href="/#prosess" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Prosess</a>
+                            <a href="/booking" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Kontakt</a>
                         </div>
                     </div>
 
